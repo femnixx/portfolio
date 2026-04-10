@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Surya Pradipta — Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --bg: #F7F4EF;
+    --bg2: #EEEAE2;
+    --text: #1C1A17;
+    --muted: #6B6860;
+    --accent: #2D6A4F;
+    --accent2: #52B788;
+    --border: #D8D3C8;
+    --card: #FFFFFF;
+    --ongoing: #744210;
+    --ongoing-bg: #FEFCE8;
+    --ongoing-border: #FCD34D;
+    --done-bg: #F0FDF4;
+    --done-border: #86EFAC;
+    --done-text: #14532D;
+  }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+ 
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    background: rgba(247,244,239,0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-name {
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+ 
+  /* SECTIONS */
+  section { padding: 6rem 0; }
+  .container { max-width: 740px; margin: 0 auto; padding: 0 2rem; }
+ 
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 5rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+  .hero-name {
+    font-family: 'Lora', serif;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.25s;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.55s;
+  }
+  .hero-cta:hover { background: #1e4d39; transform: translateY(-2px); }
+ 
+  .hero-stack {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-top: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.65s;
+  }
+  .stack-pill {
+    font-size: 0.78rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.3rem 0.9rem;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+ 
+  /* ABOUT */
+  #about { background: var(--bg); }
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1; max-width: 60px;
+    height: 1px; background: var(--accent2);
+    opacity: 0.4;
+  }
+  .about-text {
+    font-family: 'Lora', serif;
+    font-size: 1.25rem;
+    line-height: 1.85;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .about-text p + p { margin-top: 1.25rem; }
+  .about-text strong { color: var(--accent); font-weight: 600; }
+ 
+  /* PROJECTS */
+  #projects { background: var(--bg2); }
+  .projects-header { margin-bottom: 1rem; }
+  .projects-intro {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+ 
+  .project-group-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 2.5rem 0 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .badge {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .badge-done {
+    background: var(--done-bg);
+    color: var(--done-text);
+    border: 1px solid var(--done-border);
+  }
+  .badge-ongoing {
+    background: var(--ongoing-bg);
+    color: var(--ongoing);
+    border: 1px solid var(--ongoing-border);
+  }
+ 
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+  }
+  .project-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .project-name {
+    font-family: 'Lora', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .project-link {
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--done-border);
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    white-space: nowrap;
+    transition: background 0.2s;
+    background: var(--done-bg);
+  }
+  .project-link:hover { background: #dcfce7; }
+  .project-link-placeholder {
+    font-size: 0.78rem;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    white-space: nowrap;
+    opacity: 0.7;
+    font-style: italic;
+  }
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+  .project-tags {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+  }
+  .tag {
+    font-size: 0.72rem;
+    background: var(--bg2);
+    color: var(--muted);
+    padding: 0.2rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+ 
+  /* CONTACT */
+  #contact { background: var(--bg); }
+  .contact-box {
+    background: var(--accent);
+    border-radius: 20px;
+    padding: 3rem;
+    color: #fff;
+  }
+  .contact-box h2 {
+    font-family: 'Lora', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .contact-box p {
+    opacity: 0.8;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    max-width: 420px;
+    font-weight: 300;
+  }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .contact-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 100px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: background 0.2s;
+  }
+  .contact-btn:hover { background: rgba(255,255,255,0.25); }
+ 
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+ 
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+ 
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { gap: 1.2rem; }
+    .contact-box { padding: 2rem 1.5rem; }
+    .project-top { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+ 
+<nav>
+  <a class="nav-name" href="#hero">Surya Pradipta</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+ 
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eyebrow">Based in Malang, Indonesia</p>
+    <h1 class="hero-name">I'm Surya.<br/>I build apps and<br/><em>figure things out.</em></h1>
+    <p class="hero-sub">Full-stack developer and CS student. I work end-to-end — from design to deployment — and I'm always learning something new along the way.</p>
+    <a class="hero-cta" href="#contact">Let's work together →</a>
+    <div class="hero-stack">
+      <span class="stack-pill">Flutter</span>
+      <span class="stack-pill">React</span>
+      <span class="stack-pill">Next.js</span>
+      <span class="stack-pill">Node.js</span>
+      <span class="stack-pill">Laravel</span>
+      <span class="stack-pill">Firebase</span>
+      <span class="stack-pill">MongoDB</span>
+      <span class="stack-pill">Python</span>
+    </div>
+  </div>
+</section>
+ 
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label reveal">About me</div>
+    <div class="about-text reveal">
+      <p>I'm a 19-year-old Computer Science student from Malang who got into coding because I genuinely enjoy building things that work. Not just theoretically — <strong>actually shipped, actually used.</strong></p>
+      <p>I've built mobile apps for emergency reporting, educational platforms with AI feedback, and custom budgeting tools — mostly under tight deadlines and in small teams. I've learned that <strong>showing up, communicating clearly, and delivering what you promised</strong> matters more than being the smartest person in the room.</p>
+      <p>I'm always adapting. If I don't know something, I figure it out. That's just how I work.</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-label reveal">Work</div>
+    <p class="projects-intro reveal">Things I've built — solo, in teams, under pressure, and out of curiosity.</p>
+ 
+    <!-- FINISHED -->
+    <div class="project-group-title reveal">
+      <span class="badge badge-done">✓ Finished</span>
+    </div>
+ 
+    <div class="project-card reveal">
+      <div class="project-top">
+        <span class="project-name">Jaganalar</span>
+        <!-- Replace href with your GitHub link -->
+        <a class="project-link-placeholder" href="#">[ place GitHub link here ]</a>
+      </div>
+      <p class="project-desc">An educational app built solo in 1 week. Users learn to detect fake vs. real news through interactive modules and a level progression system. Integrated AI features for question generation, content evaluation, and user feedback.</p>
+      <div class="project-tags">
+        <span class="tag">Full-stack</span>
+        <span class="tag">AI integration</span>
+        <span class="tag">Solo build</span>
+        <span class="tag">1 week</span>
+      </div>
+    </div>
+ 
+    <div class="project-card reveal">
+      <div class="project-top">
+        <span class="project-name">Sigma — Siaga Malang</span>
+        <a class="project-link-placeholder" href="#">[ place GitHub link here ]</a>
+      </div>
+      <p class="project-desc">A public safety mobile app built in a 2-person team over 3 weeks. Features real-time emergency reporting, AI analytics, emergency call integration, and a news module. Built to potentially assist thousands during disaster events.</p>
+      <div class="project-tags">
+        <span class="tag">Flutter</span>
+        <span class="tag">AI analytics</span>
+        <span class="tag">Real-time</span>
+        <span class="tag">2-person team</span>
+      </div>
+    </div>
+ 
+    <div class="project-card reveal">
+      <div class="project-top">
+        <span class="project-name">MoneyMate</span>
+        <a class="project-link-placeholder" href="#">[ place GitHub link here ]</a>
+      </div>
+      <p class="project-desc">A fully custom budgeting web app built with a cross-functional team. I handled the backend API design and documentation, contributed to Figma designs from mid-fidelity to high-fidelity, and helped structure the overall system for scalability.</p>
+      <div class="project-tags">
+        <span class="tag">React</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">REST API</span>
+        <span class="tag">Figma</span>
+      </div>
+    </div>
+ 
+    <!-- ONGOING -->
+    <div class="project-group-title reveal">
+      <span class="badge badge-ongoing">⟳ Ongoing</span>
+    </div>
+ 
+    <div class="project-card reveal">
+      <div class="project-top">
+        <span class="project-name">Phishing AI Detector</span>
+        <a class="project-link-placeholder" href="#">[ place GitHub link here ]</a>
+      </div>
+      <p class="project-desc">A tool that takes user-submitted URLs or text and detects potential phishing attempts using AI. Currently in development — building out the model integration and submission interface.</p>
+      <div class="project-tags">
+        <span class="tag">AI / ML</span>
+        <span class="tag">Python</span>
+        <span class="tag">In progress</span>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label reveal">Get in touch</div>
+    <div class="contact-box reveal">
+      <h2>Let's build something.</h2>
+      <p>I'm open for freelance projects — web apps, mobile apps, backends. Starting from Rp 1.3jt. Reach out and let's talk about what you need.</p>
+      <div class="contact-links">
+        <!-- Replace with your actual WhatsApp link -->
+        <a class="contact-btn" href="https://wa.me/6282248969863">WhatsApp →</a>
+        <!-- Replace with your actual email -->
+        <a class="contact-btn" href="mailto:Suryapradipta06@gmail.com">Email →</a>
+        <!-- Replace with your GitHub profile -->
+        <a class="contact-btn" href="#">GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<footer>
+  Built by Surya Pradipta · Malang, Indonesia
+</footer>
+ 
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+ 
+</body>
+</html>
