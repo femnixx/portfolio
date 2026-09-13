@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import {
   Radar,
   RadarChart,
@@ -32,38 +32,18 @@ function getLanguageColor(lang) {
   return LANGUAGE_COLORS[lang] || LANGUAGE_COLORS.default
 }
 
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const HOURS = Array.from({ length: 24 }, (_, i) => i)
+
 function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
   const [username, setUsername] = useState(defaultUsername)
   const [input, setInput] = useState(defaultUsername)
   const [profile, setProfile] = useState(null)
   const [repos, setRepos] = useState([])
-  const [contributions, setContributions] = useState(null)
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [rateLimit, setRateLimit] = useState(null)
-
-  const calculateLanguageStats = (reposList) => {
-    const counts = {}
-    reposList.forEach((repo) => {
-      const lang = repo.language
-      if (lang) {
-        counts[lang] = (counts[lang] || 0) + 1
-      }
-    })
-
-    const sorted = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-
-    const total = sorted.reduce((sum, [, count]) => sum + count, 0)
-    return sorted.map(([lang, count]) => ({
-      language: lang,
-      count,
-      pct: total ? Math.round((count / total) * 100) : 0,
-      color: getLanguageColor(lang),
-    }))
-  }
 
   const fetchWithTimeout = (url, ms = 12000) => {
     const timeout = new Promise((_, reject) =>
@@ -80,12 +60,13 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     setRateLimit(null)
 
     try {
-      const [profileRes, reposRes] = await Promise.all([
+      const [profileRes, reposRes, eventsRes] = await Promise.all([
         fetchWithTimeout(`https://api.github.com/users/${name}`),
         fetchWithTimeout(`https://api.github.com/users/${name}/repos?sort=updated&per_page=100`),
+        fetchWithTimeout(`https://api.github.com/users/${name}/events/public?per_page=300`),
       ])
 
-      if (profileRes.status === 403 || reposRes.status === 403) {
+      if (profileRes.status === 403 || reposRes.status === 403 || eventsRes.status === 403) {
         const resetTime = profileRes.headers.get('X-RateLimit-Reset')
         const resetDate = resetTime ? new Date(parseInt(resetTime) * 1000) : null
         setRateLimit({
@@ -102,15 +83,17 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
         return
       }
 
-      if (!profileRes.ok || !reposRes.ok) {
+      if (!profileRes.ok || !reposRes.ok || !eventsRes.ok) {
         throw new Error('Failed to fetch GitHub data')
       }
 
       const profileData = await profileRes.json()
       const reposData = await reposRes.json()
+      const eventsData = await eventsRes.json()
 
       setProfile(profileData)
       setRepos(Array.isArray(reposData) ? reposData : [])
+      setEvents(Array.isArray(eventsData) ? eventsData : [])
       setUsername(name)
     } catch (err) {
       setError(err.message || 'Something went wrong')
@@ -128,7 +111,98 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     fetchData(input)
   }
 
-  const languageStats = calculateLanguageStats(repos)
+  const languageStats = useMemo(() => {
+    const counts = {}
+    repos.forEach((repo) => {
+      const lang = repo.language
+      if (lang) counts[lang] = (counts[lang] || 0) + 1
+    })
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([lang, count]) => ({ language: lang, count, color: getLanguageColor(lang) }))
+  }, [repos])
+
+  const topLanguage = languageStats[0]?.language || 'N/A'
+
+  const radarData = useMemo(() => {
+    const total = languageStats.reduce((sum, item) => sum + item.count, 0)
+    return languageStats.map((item) => ({
+      subject: `${total ? Math.round((item.count / total) * 100) : 0}%\n${item.language}`,
+      value: Math.max(total ? Math.round((item.count / total) * 100) : 0, 5),
+      color: item.color,
+    }))
+  }, [languageStats])
+
+  const totalStars = useMemo(() => repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0), [repos])
+  const totalForks = useMemo(() => repos.reduce((sum, r) => sum + (r.forks_count || 0), 0), [repos])
+
+  const commitActivity = useMemo(() => {
+    const grid = Array.from({ length: 7 }, () => Array(24).fill(0))
+    events.forEach((event) => {
+      if (event.type === 'PushEvent') {
+        const date = new Date(event.created_at)
+        const day = date.getDay()
+        const hour = date.getHours()
+        const commits = event.payload?.commits?.length || 1
+        grid[day][hour] += commits
+      }
+    })
+    return grid
+  }, [events])
+
+  const punchCardMax = useMemo(() => {
+    let max = 0
+    commitActivity.forEach((row) => row.forEach((val) => { if (val > max) max = val }))
+    return max || 1
+  }, [commitActivity])
+
+  const getPunchColor = (val) => {
+    if (val === 0) return '#161b22'
+    const intensity = val / punchCardMax
+    if (intensity < 0.25) return '#0e4429'
+    if (intensity < 0.5) return '#006d32'
+    if (intensity < 0.75) return '#26a641'
+    return '#39d353'
+  }
+
+  const totalCommitsLastYear = useMemo(() => {
+    const oneYearAgo = Date.now() - 365 * 24 * 60 * 60 * 1000
+    return events
+      .filter((e) => new Date(e.created_at).getTime() > oneYearAgo && e.type === 'PushEvent')
+      .reduce((sum, e) => sum + (e.payload?.commits?.length || 1), 0)
+  }, [events])
+
+  const prMergeRate = useMemo(() => {
+    const prEvents = events.filter((e) => e.type === 'PullRequestEvent')
+    if (prEvents.length === 0) return 0
+    const merged = prEvents.filter((e) => e.payload?.pull_request?.merged).length
+    return Math.round((merged / prEvents.length) * 100)
+  }, [events])
+
+  const recentActivity = useMemo(() => {
+    return events.slice(0, 20).map((event) => {
+      let icon = '📝'
+      let text = event.type
+      if (event.type === 'PushEvent') {
+        icon = '🔨'
+        text = `Pushed ${event.payload?.commits?.length || 1} commit(s) to ${event.repo?.name || 'a repo'}`
+      } else if (event.type === 'PullRequestEvent') {
+        icon = '🔀'
+        text = `PR ${event.payload?.action} in ${event.repo?.name || 'a repo'}`
+      } else if (event.type === 'IssuesEvent') {
+        icon = '🐛'
+        text = `Issue ${event.payload?.action} in ${event.repo?.name || 'a repo'}`
+      } else if (event.type === 'PullRequestReviewEvent') {
+        icon = '👀'
+        text = `Reviewed PR in ${event.repo?.name || 'a repo'}`
+      } else if (event.type === 'CreateEvent') {
+        icon = '✨'
+        text = `Created ${event.payload?.ref_type || 'resource'} in ${event.repo?.name || 'a repo'}`
+      }
+      return { ...event, icon, text }
+    })
+  }, [events])
 
   const orgs = [
     { name: 'Raion-Community', url: 'https://github.com/Raion-Community' },
@@ -136,14 +210,8 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     { name: 'Raion-Mobile-Engineer', url: 'https://github.com/Raion-Mobile-Engineer' },
   ]
 
-  const radarData = languageStats.map((item) => ({
-    subject: `${item.pct}%\n${item.language}`,
-    value: Math.max(item.pct, 5),
-    color: item.color,
-  }))
-
   return (
-    <div className="gh-viewer">
+    <div className="gh-dashboard">
       <form className="gh-input-row" onSubmit={handleSubmit}>
         <input
           className="gh-input"
@@ -165,88 +233,180 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
       )}
 
       {profile && (
-        <div className="gh-card">
-          <div className="gh-header">
-            <img src={profile.avatar_url} alt="avatar" className="gh-avatar" />
-            <div className="gh-header-info">
-              <div className="gh-name">{profile.name || profile.login}</div>
-              <div className="gh-login">@{profile.login}</div>
-              {profile.bio && <div className="gh-bio">{profile.bio}</div>}
-            </div>
-          </div>
-
-          <div className="gh-contribution-banner">
-            <div className="gh-contribution-number">{profile.public_repos}</div>
-            <div className="gh-contribution-label">public repositories</div>
-          </div>
-
-          <div className="gh-section">
-            <div className="gh-section-title">Organizations</div>
-            <div className="gh-orgs">
-              {orgs.map((org) => (
-                <a key={org.name} href={org.url} target="_blank" rel="noopener" className="gh-org-badge">
-                  @{org.name}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="gh-section">
-            <div className="gh-section-title">Top Contributed Repositories</div>
-            <div className="gh-repo-list">
-              {repos.map((repo) => (
-                <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="gh-repo-item">
-                  <div className="gh-repo-name">{repo.name}</div>
-                  <div className="gh-repo-meta">
-                    <span className="gh-lang-dot" style={{ background: getLanguageColor(repo.language) }} />
-                    {repo.language || 'Unknown'}
+        <>
+          <div className="gh-top-row">
+            <div className="gh-profile-header">
+              <img src={profile.avatar_url} alt="avatar" className="gh-avatar-large" />
+              <div className="gh-profile-info">
+                <div className="gh-name-large">{profile.name || profile.login}</div>
+                <div className="gh-login">@{profile.login}</div>
+                {profile.bio && <div className="gh-bio">{profile.bio}</div>}
+                <div className="gh-profile-stats">
+                  <div className="gh-stat">
+                    <span className="gh-stat-value">{profile.public_repos}</span>
+                    <span className="gh-stat-label">Repos</span>
                   </div>
-                </a>
-              ))}
+                  <div className="gh-stat">
+                    <span className="gh-stat-value">{totalStars}</span>
+                    <span className="gh-stat-label">Stars</span>
+                  </div>
+                  <div className="gh-stat">
+                    <span className="gh-stat-value">{totalForks}</span>
+                    <span className="gh-stat-label">Forks</span>
+                  </div>
+                  <div className="gh-stat">
+                    <span className="gh-stat-value">{profile.followers}</span>
+                    <span className="gh-stat-label">Followers</span>
+                  </div>
+                  <div className="gh-stat">
+                    <span className="gh-stat-value">{profile.following}</span>
+                    <span className="gh-stat-label">Following</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="gh-quick-stats">
+              <div className="gh-quick-card">
+                <div className="gh-quick-label">Total Commits (Last 365 Days)</div>
+                <div className="gh-quick-value">{totalCommitsLastYear}</div>
+              </div>
+              <div className="gh-quick-card">
+                <div className="gh-quick-label">Pull Request Merge Rate</div>
+                <div className="gh-quick-value">{prMergeRate}%</div>
+              </div>
+              <div className="gh-quick-card">
+                <div className="gh-quick-label">Top Used Language</div>
+                <div className="gh-quick-value" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span className="gh-lang-dot" style={{ background: getLanguageColor(topLanguage) }} />
+                  {topLanguage}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="gh-section">
-            <div className="gh-section-title">Language Overview</div>
-            <div className="gh-radar-container">
-              {radarData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                    <PolarGrid stroke="var(--border)" />
-                    <PolarAngleAxis
-                      dataKey="subject"
-                      stroke="var(--text-muted)"
-                      tick={({ x, y, payload }) => {
-                        const lines = payload.value.split('\n')
-                        const color = radarData[payload.index]?.color || 'var(--accent-mauve)'
-                        return (
-                          <text x={x} y={y} fill="var(--text-muted)" fontSize={12} textAnchor="middle">
-                            <tspan x={x} dy="-0.2em" fontWeight="bold" fill={color}>
-                              {lines[0]}
-                            </tspan>
-                            <tspan x={x} dy="1.2em">
-                              {lines[1]}
-                            </tspan>
-                          </text>
-                        )
-                      }}
+          <div className="gh-middle-row">
+            <div className="gh-radar-section">
+              <div className="gh-section-title">Language Overview</div>
+              <div className="gh-radar-container">
+                {radarData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                      <PolarGrid stroke="var(--border)" />
+                      <PolarAngleAxis
+                        dataKey="subject"
+                        stroke="var(--text-muted)"
+                        tick={({ x, y, payload }) => {
+                          const lines = payload.value.split('\n')
+                          const color = radarData[payload.index]?.color || 'var(--accent-mauve)'
+                          return (
+                            <text x={x} y={y} fill="var(--text-muted)" fontSize={12} textAnchor="middle">
+                              <tspan x={x} dy="-0.2em" fontWeight="bold" fill={color}>
+                                {lines[0]}
+                              </tspan>
+                              <tspan x={x} dy="1.2em">
+                                {lines[1]}
+                              </tspan>
+                            </text>
+                          )
+                        }}
+                      />
+                      <Radar
+                        dataKey="value"
+                        stroke="var(--accent-green)"
+                        fill="var(--accent-green)"
+                        fillOpacity={0.35}
+                        strokeWidth={2}
+                        dot={{ r: 4, fill: 'var(--accent-green)', stroke: '#ffffff', strokeWidth: 1 }}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="gh-radar-loading">No language data available</div>
+                )}
+              </div>
+            </div>
+
+            <div className="gh-punch-section">
+              <div className="gh-section-title">Activity Punch Card</div>
+              <div className="gh-punch-card">
+                <div className="gh-punch-grid">
+                  {DAYS.map((day) => (
+                    <div key={day} className="gh-punch-row">
+                      <div className="gh-punch-day">{day}</div>
+                      <div className="gh-punch-cells">
+                        {HOURS.map((hour) => {
+                          const val = commitActivity[DAYS.indexOf(day)][hour]
+                          return (
+                            <div
+                              key={hour}
+                              className="gh-punch-cell"
+                              style={{ background: getPunchColor(val) }}
+                              title={`${day} ${hour}:00 - ${val} commits`}
+                            />
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="gh-punch-legend">
+                  <span>Less</span>
+                  {[0, 1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className="gh-punch-legend-cell"
+                      style={{ background: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'][level] }}
                     />
-                    <Radar
-                      dataKey="value"
-                      stroke="var(--accent-green)"
-                      fill="var(--accent-green)"
-                      fillOpacity={0.35}
-                      strokeWidth={2}
-                      dot={{ r: 4, fill: 'var(--accent-green)', stroke: '#ffffff', strokeWidth: 1 }}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="gh-radar-loading">No language data available</div>
-              )}
+                  ))}
+                  <span>More</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="gh-bottom-row">
+            <div className="gh-repos-section">
+              <div className="gh-section-title">Top Repositories</div>
+              <div className="gh-repos-grid">
+                {repos.slice(0, 6).map((repo) => (
+                  <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="gh-repo-card">
+                    <div className="gh-repo-card-header">
+                      <div className="gh-repo-card-name">{repo.name}</div>
+                      {repo.language && (
+                        <span className="gh-lang-dot" style={{ background: getLanguageColor(repo.language) }} />
+                      )}
+                    </div>
+                    <div className="gh-repo-card-desc">
+                      {repo.description || 'No description'}
+                    </div>
+                    <div className="gh-repo-card-meta">
+                      <span>⭐ {repo.stargazers_count}</span>
+                      <span>⑂ {repo.forks_count}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div className="gh-activity-section">
+              <div className="gh-section-title">Recent Activity</div>
+              <div className="gh-activity-list">
+                {recentActivity.map((activity, i) => (
+                  <div key={i} className="gh-activity-item">
+                    <div className="gh-activity-icon">{activity.icon}</div>
+                    <div className="gh-activity-content">
+                      <div className="gh-activity-text">{activity.text}</div>
+                      <div className="gh-activity-time">
+                        {new Date(activity.created_at).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
