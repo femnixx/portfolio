@@ -253,7 +253,7 @@ section:last-of-type {
   bottom: 2rem;
   right: 2rem;
   z-index: 100;
-  width: 380px;
+  width: min(380px, calc(100vw - 2rem));
   max-height: 70vh;
   background: var(--terminal-bg);
   border: 1px solid var(--border);
@@ -271,6 +271,7 @@ section:last-of-type {
   padding: 0.75rem 1rem;
   background: var(--terminal-header);
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .terminal-widget-header span {
@@ -299,11 +300,32 @@ section:last-of-type {
 .terminal-widget .interactive-terminal {
   border: none;
   border-radius: 0;
-  max-height: calc(70vh - 45px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .terminal-widget .terminal-body {
-  max-height: calc(70vh - 100px);
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-widget .terminal-history {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.terminal-widget .terminal-input-row {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--terminal-header);
 }
 
 .hero-meta {
@@ -403,14 +425,27 @@ section:last-of-type {
   max-height: 60vh;
 }
 
-.terminal-body {
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-height: 220px;
-  max-height: 280px;
+.terminal-history {
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
+}
+
+.terminal-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-history::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-history::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.terminal-history::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .terminal-line {
@@ -496,6 +531,8 @@ section:last-of-type {
   pointer-events: none;
   width: 0;
   height: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
 }
 
 @keyframes blink {
@@ -1203,5 +1240,17 @@ footer {
   }
   .memory-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+  .terminal-widget {
+    width: calc(100% - 1rem);
+    right: 0.5rem;
+    bottom: 0.5rem;
+    max-height: 50vh;
+  }
+  .terminal-toggle {
+    right: 0.5rem;
+    bottom: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
   }
 }

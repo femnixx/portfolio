@@ -258,6 +258,9 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
     e.preventDefault()
     processCommand(input)
     setInput('')
+    setTimeout(() => {
+      hiddenRef.current?.focus()
+    }, 0)
   }
 
   return (
@@ -274,32 +277,35 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
         </div>
       </div>
       <div className="terminal-body">
-        {history.map((line, i) => (
-          <div key={i}>
-            {line.type === 'command' && (
-              <div className="terminal-line">
-                <span className="terminal-prompt">➜</span>
-                <span className="terminal-cmd">{line.text}</span>
-              </div>
-            )}
-            {line.type === 'output' && (
-              <div className="terminal-output">{line.text}</div>
-            )}
-            {line.type === 'error' && (
-              <div className="terminal-output" style={{ color: 'var(--accent-red)' }}>{line.text}</div>
-            )}
-            {line.type === 'help' && (
-              <div className="terminal-help-grid">
-                {line.commands.map((c) => (
-                  <div key={c.cmd}>
-                    <span className="terminal-help-cmd">{c.cmd}</span>
-                    <span className="terminal-help-desc"> — {c.desc}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+        <div className="terminal-history">
+          {history.map((line, i) => (
+            <div key={i}>
+              {line.type === 'command' && (
+                <div className="terminal-line">
+                  <span className="terminal-prompt">➜</span>
+                  <span className="terminal-cmd">{line.text}</span>
+                </div>
+              )}
+              {line.type === 'output' && (
+                <div className="terminal-output">{line.text}</div>
+              )}
+              {line.type === 'error' && (
+                <div className="terminal-output" style={{ color: 'var(--accent-red)' }}>{line.text}</div>
+              )}
+              {line.type === 'help' && (
+                <div className="terminal-help-grid">
+                  {line.commands.map((c) => (
+                    <div key={c.cmd}>
+                      <span className="terminal-help-cmd">{c.cmd}</span>
+                      <span className="terminal-help-desc"> — {c.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
         <form onSubmit={handleSubmit} className="terminal-input-row">
           <span className="terminal-prompt">➜</span>
           <span className="terminal-text-display">{input}</span>
@@ -315,7 +321,6 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
             autoFocus={focused}
           />
         </form>
-        <div ref={endRef} />
       </div>
     </div>
   )
