@@ -19,6 +19,10 @@
   --c-teal: #14B8A6;
   --c-red: #EF4444;
   --c-indigo: #6366F1;
+  --terminal-bg: #1E1E1E;
+  --terminal-text: #A6E22E;
+  --terminal-comment: #6272A4;
+  --terminal-prompt: #FF79C6;
 }
 
 html { scroll-behavior: smooth; }
@@ -38,65 +42,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ENTRANCE */
-.entrance-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: opacity 0.6s ease, visibility 0.6s ease;
-}
-
-.entrance-overlay.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.entrance-content {
-  text-align: center;
-  animation: pulseEntrance 2s ease infinite;
-}
-
-.entrance-name {
-  font-family: 'DM Mono', monospace;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 500;
-  color: var(--text);
-  margin-bottom: 1rem;
-  letter-spacing: -0.03em;
-}
-
-.entrance-hint {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.85rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-@keyframes pulseEntrance {
-  0%, 100% { opacity: 0.6; transform: scale(0.98); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-.nav-visible {
-  opacity: 0;
-  animation: heroEntrance 0.6s ease 0.3s forwards;
-}
-
-@keyframes heroEntrance {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* NAV */
 nav {
   position: fixed;
@@ -110,7 +55,6 @@ nav {
   padding: 1.25rem 2.5rem;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
-  transition: opacity 0.3s ease;
 }
 
 .nav-name {
@@ -214,6 +158,90 @@ section:last-of-type {
 
 .hero-cta:hover { opacity: 0.5; }
 
+.hero-decoration {
+  position: absolute;
+  right: 2.5rem;
+  bottom: 6rem;
+  width: 320px;
+}
+
+/* LINUX TERMINAL */
+.linux-terminal {
+  background: var(--terminal-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #333;
+  font-family: 'DM Mono', monospace;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.terminal-header {
+  background: #2D2D2D;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: #FF5F56; }
+.terminal-dot.yellow { background: #FFBD2E; }
+.terminal-dot.green { background: #27C93F; }
+
+.terminal-title {
+  font-size: 0.75rem;
+  color: #999;
+  letter-spacing: 0.02em;
+}
+
+.terminal-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.terminal-line {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.terminal-prompt {
+  color: var(--terminal-prompt);
+  user-select: none;
+}
+
+.terminal-cmd {
+  color: #FFF;
+}
+
+.terminal-comment {
+  color: var(--terminal-comment);
+  padding-left: 1.2rem;
+}
+
+.terminal-cursor {
+  color: var(--terminal-text);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* CAT */
 .cat-wrap {
   position: absolute;
@@ -222,6 +250,7 @@ section:last-of-type {
   width: 120px;
   height: 120px;
   animation: floatCat 6s ease-in-out infinite;
+  z-index: 0;
 }
 
 .cat {
@@ -734,150 +763,13 @@ footer {
   z-index: 1;
 }
 
-/* GITHUB DECORATIONS */
-.github-decorations {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.github-card {
-  position: absolute;
-  top: 120px;
-  right: 2.5rem;
-  width: 280px;
-  background: var(--preview-bg);
-  border: 1px solid var(--preview-border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  pointer-events: auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-}
-
-.github-card-header {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.github-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-}
-
-.github-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.github-login {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-
-.github-bio {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.5;
-  margin-bottom: 0.75rem;
-  font-weight: 300;
-}
-
-.github-stats {
-  display: flex;
-  gap: 1rem;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 0.75rem;
-}
-
-.github-langs {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-.github-lang-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  padding: 0.15rem 0.4rem;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.github-repos {
-  position: absolute;
-  bottom: 2.5rem;
-  right: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  pointer-events: auto;
-}
-
-.github-repo-link {
-  background: var(--preview-bg);
-  border: 1px solid var(--preview-border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  text-decoration: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.15s;
-  width: 260px;
-}
-
-.github-repo-link:hover {
-  transform: translateX(-4px);
-}
-
-.github-repo-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.8rem;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.github-repo-lang {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
 /* RESPONSIVE */
-@media (max-width: 1024px) {
-  .github-card {
-    display: none;
-  }
-  .github-repos {
-    display: none;
-  }
-}
-
 @media (max-width: 900px) {
   .games-grid {
     grid-template-columns: 1fr;
+  }
+  .hero-decoration {
+    display: none;
   }
 }
 
@@ -887,6 +779,5 @@ footer {
   .container { padding: 0 1.5rem; }
   .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
   footer { flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
-  .cat-wrap { right: 1rem; bottom: 8rem; width: 90px; height: 90px; }
   section { padding: 4rem 0; }
 }

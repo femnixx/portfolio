@@ -140,84 +140,45 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function EntranceAnimation({ onEnter }) {
+function LinuxTerminal() {
   return (
-    <div className="entrance-overlay" onClick={onEnter}>
-      <div className="entrance-content">
-        <div className="entrance-name">Surya Pradipta</div>
-        <div className="entrance-hint">Click anywhere to enter</div>
+    <div className="linux-terminal">
+      <div className="terminal-header">
+        <div className="terminal-dots">
+          <span className="terminal-dot red" />
+          <span className="terminal-dot yellow" />
+          <span className="terminal-dot green" />
+        </div>
+        <div className="terminal-title">femnixx@portfolio:~</div>
       </div>
-    </div>
-  )
-}
-
-function Cat() {
-  return (
-    <div className="cat-wrap">
-      <div className="cat">
-        <div className="cat-ear left" />
-        <div className="cat-ear right" />
-        <div className="cat-head">
-          <div className="cat-eye left" />
-          <div className="cat-eye right" />
+      <div className="terminal-body">
+        <div className="terminal-line">
+          <span className="terminal-prompt">➜</span>
+          <span className="terminal-cmd">neofetch</span>
         </div>
-        <div className="cat-body">
-          <div className="cat-paw left" />
-          <div className="cat-paw right" />
+        <div className="terminal-line terminal-comment">
+          OS: Arch Linux x86_64
         </div>
-        <div className="cat-tail" />
-      </div>
-    </div>
-  )
-}
-
-function GitHubDecorations({ profile, repos }) {
-  if (!profile) return null
-
-  const langs = {}
-  repos?.forEach((repo) => {
-    if (repo.language) {
-      langs[repo.language] = (langs[repo.language] || 0) + 1
-    }
-  })
-
-  const topLangs = Object.entries(langs)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-
-  return (
-    <div className="github-decorations">
-      <div className="github-card">
-        <div className="github-card-header">
-          <img src={profile.avatar_url} alt="avatar" className="github-avatar" />
-          <div>
-            <div className="github-name">{profile.name || profile.login}</div>
-            <div className="github-login">@{profile.login}</div>
-          </div>
+        <div className="terminal-line terminal-comment">
+          Shell: zsh 5.9
         </div>
-        {profile.bio && <div className="github-bio">{profile.bio}</div>}
-        <div className="github-stats">
-          <span>📦 {profile.public_repos}</span>
-          <span>👥 {profile.followers}</span>
-          <span>📍 {profile.location || 'Indonesia'}</span>
+        <div className="terminal-line terminal-comment">
+          Theme: Gruvbox Dark
         </div>
-        {topLangs.length > 0 && (
-          <div className="github-langs">
-            {topLangs.map(([lang, count]) => (
-              <span key={lang} className="github-lang-tag">
-                {lang} ×{count}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="github-repos">
-        {repos?.slice(0, 4).map((repo) => (
-          <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="github-repo-link">
-            <div className="github-repo-name">{repo.name}</div>
-            <div className="github-repo-lang">{repo.language}</div>
-          </a>
-        ))}
+        <div className="terminal-line terminal-comment">
+          Terminal: kitty
+        </div>
+        <div className="terminal-line">
+          <span className="terminal-prompt">➜</span>
+          <span className="terminal-cmd">cat /proc/version</span>
+        </div>
+        <div className="terminal-line terminal-comment">
+          Linux version 6.9.3-arch1-1
+        </div>
+        <div className="terminal-line">
+          <span className="terminal-prompt">➜</span>
+          <span className="terminal-cursor">_</span>
+        </div>
       </div>
     </div>
   )
@@ -413,21 +374,6 @@ function MemoryGame() {
 
 function App() {
   const [openProjects, setOpenProjects] = React.useState({})
-  const [entered, setEntered] = React.useState(false)
-  const [githubProfile, setGithubProfile] = React.useState(null)
-  const [githubRepos, setGithubRepos] = React.useState([])
-
-  React.useEffect(() => {
-    fetch('https://api.github.com/users/femnixx')
-      .then((r) => r.json())
-      .then(setGithubProfile)
-      .catch(() => {})
-
-    fetch('https://api.github.com/users/femnixx/repos?sort=updated&per_page=8')
-      .then((r) => r.json())
-      .then(setGithubRepos)
-      .catch(() => {})
-  }, [])
 
   const toggleProject = (id) => {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -435,8 +381,7 @@ function App() {
 
   return (
     <>
-      {!entered && <EntranceAnimation onEnter={() => setEntered(true)} />}
-      <nav className={entered ? 'nav-visible' : ''}>
+      <nav>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
@@ -460,7 +405,9 @@ function App() {
           </p>
           <a className="hero-cta" href="#projects">View projects →</a>
         </div>
-        <Cat />
+        <div className="hero-decoration">
+          <LinuxTerminal />
+        </div>
       </section>
 
       {/* ABOUT */}
@@ -579,8 +526,6 @@ function App() {
         <span>Surya Pradipta · Malang, Indonesia</span>
         <span>2026</span>
       </footer>
-
-      <GitHubDecorations profile={githubProfile} repos={githubRepos} />
     </>
   )
 }
