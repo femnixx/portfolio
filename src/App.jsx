@@ -437,7 +437,7 @@ function ReactionGame() {
 }
 
 function MemoryGame() {
-  const emojis = ['🎮', '🎨', '🚀', '💡', '🎵', '⭐']
+  const emojis = ['🎮', '🎨', '🚀', '💡', '🎵', '⭐', '🔥', '💻']
   const [cards, setCards] = React.useState(() => {
     const shuffled = [...emojis, ...emojis].sort(() => Math.random() - 0.5)
     return shuffled.map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }))
@@ -492,8 +492,11 @@ function MemoryGame() {
             className={`memory-card ${card.flipped || card.matched ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`}
             onClick={() => flip(i)}
           >
-            <span className="memory-front">?</span>
-            <span className="memory-back">{card.emoji}</span>
+            {card.flipped || card.matched ? (
+              <span className="memory-emoji">{card.emoji}</span>
+            ) : (
+              <span className="memory-question">?</span>
+            )}
           </button>
         ))}
       </div>
@@ -510,7 +513,9 @@ function App() {
   const [openProjects, setOpenProjects] = React.useState({})
   const [githubProfile, setGithubProfile] = React.useState(null)
   const [githubRepos, setGithubRepos] = React.useState([])
+  const [githubContributions, setGithubContributions] = React.useState(0)
   const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'frappe')
+  const [menuOpen, setMenuOpen] = React.useState(false)
 
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -527,6 +532,15 @@ function App() {
       .then((r) => r.json())
       .then(setGithubRepos)
       .catch(() => {})
+
+    fetch('https://api.github.com/users/femnixx/events/public?per_page=100')
+      .then((r) => r.json())
+      .then((events) => {
+        if (Array.isArray(events)) {
+          setGithubContributions(events.length)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   const toggleProject = (id) => {
@@ -541,12 +555,17 @@ function App() {
     <>
       <nav>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
-        <ul className="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#github">GitHub</a></li>
-          <li><a href="#games">Games</a></li>
-          <li><a href="#contact">Contact</a></li>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`} />
+        </button>
+        <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          <li><a href="#about" onClick={() => setMenuOpen(false)}>About</a></li>
+          <li><a href="#projects" onClick={() => setMenuOpen(false)}>Projects</a></li>
+          <li><a href="#github" onClick={() => setMenuOpen(false)}>GitHub</a></li>
+          <li><a href="#games" onClick={() => setMenuOpen(false)}>Games</a></li>
+          <li><a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a></li>
           <li><button className="theme-toggle" onClick={toggleTheme}>{theme === 'frappe' ? '☀️' : '🌙'}</button></li>
         </ul>
       </nav>
@@ -628,6 +647,7 @@ function App() {
                   <span className="github-profile-stat">📦 {githubProfile.public_repos}</span>
                   <span className="github-profile-stat">👥 {githubProfile.followers}</span>
                   <span className="github-profile-stat">📍 {githubProfile.location || 'Indonesia'}</span>
+                  <span className="github-profile-stat">🔥 {githubContributions} recent events</span>
                 </div>
               </div>
             </div>
