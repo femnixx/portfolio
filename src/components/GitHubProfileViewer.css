@@ -214,6 +214,39 @@
   padding-bottom: 0.5rem;
 }
 
+.gh-punch-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 36px;
+}
+
+.gh-punch-day-header {
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.gh-punch-hours {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.gh-punch-hour-label {
+  width: 10px;
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.gh-punch-hour-label--major {
+  color: var(--text);
+  font-weight: 500;
+}
+
 .gh-punch-grid {
   display: flex;
   flex-direction: column;
@@ -237,6 +270,7 @@
 .gh-punch-cells {
   display: flex;
   gap: 2px;
+  position: relative;
 }
 
 .gh-punch-cell {
@@ -244,6 +278,26 @@
   height: 10px;
   border-radius: 2px;
   flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.gh-punch-cell:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 .gh-punch-legend {

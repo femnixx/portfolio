@@ -141,11 +141,17 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     const grid = Array.from({ length: 7 }, () => Array(24).fill(0))
     events.forEach((event) => {
       if (event.type === 'PushEvent') {
-        const date = new Date(event.created_at)
-        const day = date.getDay()
-        const hour = date.getHours()
-        const commits = event.payload?.commits?.length || 1
-        grid[day][hour] += commits
+        const commits = event.payload?.commits || []
+        const timestamps = commits.map((c) => c?.timestamp).filter(Boolean)
+        const dates = timestamps.length > 0
+          ? timestamps.map((ts) => new Date(ts))
+          : [new Date(event.created_at)]
+
+        dates.forEach((date) => {
+          const day = date.getDay()
+          const hour = date.getHours()
+          grid[day][hour] += 1
+        })
       }
     })
     return grid
@@ -158,12 +164,8 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
   }, [commitActivity])
 
   const getPunchColor = (val) => {
-    if (val === 0) return '#161b22'
-    const intensity = val / punchCardMax
-    if (intensity < 0.25) return '#0e4429'
-    if (intensity < 0.5) return '#006d32'
-    if (intensity < 0.75) return '#26a641'
-    return '#39d353'
+    if (val === 0) return 'var(--bg-alt)'
+    return 'var(--accent-green)'
   }
 
   const totalCommitsLastYear = useMemo(() => {
@@ -330,6 +332,19 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
             <div className="gh-punch-section">
               <div className="gh-section-title">Activity Punch Card</div>
               <div className="gh-punch-card">
+                <div className="gh-punch-header">
+                  <div className="gh-punch-day-header" />
+                  <div className="gh-punch-hours">
+                    {HOURS.map((hour) => (
+                      <div
+                        key={hour}
+                        className={`gh-punch-hour-label ${hour % 6 === 0 ? 'gh-punch-hour-label--major' : ''}`}
+                      >
+                        {hour}
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="gh-punch-grid">
                   {DAYS.map((day) => (
                     <div key={day} className="gh-punch-row">
@@ -337,12 +352,14 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                       <div className="gh-punch-cells">
                         {HOURS.map((hour) => {
                           const val = commitActivity[DAYS.indexOf(day)][hour]
+                          const nextHour = (hour + 1) % 24
+                          const tooltipText = `${day} ${hour.toString().padStart(2, '0')}:00–${nextHour.toString().padStart(2, '0')}:00: ${val} commit${val !== 1 ? 's' : ''}`
                           return (
                             <div
                               key={hour}
                               className="gh-punch-cell"
                               style={{ background: getPunchColor(val) }}
-                              title={`${day} ${hour}:00 - ${val} commits`}
+                              data-tooltip={tooltipText}
                             />
                           )
                         })}
@@ -356,7 +373,7 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                     <div
                       key={level}
                       className="gh-punch-legend-cell"
-                      style={{ background: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'][level] }}
+                      style={{ background: getPunchColor(level === 0 ? 0 : Math.max(1, Math.floor(punchCardMax * (level / 4)))) }}
                     />
                   ))}
                   <span>More</span>
