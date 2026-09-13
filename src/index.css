@@ -187,6 +187,35 @@ section:last-of-type {
   align-items: center;
   padding-top: 5rem;
   position: relative;
+  flex-wrap: wrap;
+}
+
+.hero-content {
+  flex: 1 1 100%;
+  max-width: 600px;
+}
+
+.hero-decoration {
+  flex: 1 1 100%;
+  width: 100%;
+  margin-top: 2rem;
+  position: relative;
+  right: auto;
+  bottom: auto;
+}
+
+@media (min-width: 901px) {
+  .hero-content {
+    max-width: 50%;
+  }
+  .hero-decoration {
+    max-width: 50%;
+    margin-top: 0;
+    position: absolute;
+    right: 2.5rem;
+    bottom: 6rem;
+    width: 380px;
+  }
 }
 
 .hero-meta {
@@ -237,26 +266,6 @@ section:last-of-type {
 }
 
 .hero-cta:hover { opacity: 0.5; }
-
-.hero-decoration {
-  position: absolute;
-  right: 2.5rem;
-  bottom: 6rem;
-  width: 380px;
-  z-index: 1;
-}
-
-@media (max-width: 900px) {
-  .hero-decoration {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: 100%;
-    margin-top: 2rem;
-  }
-}
-
-/* INTERACTIVE TERMINAL */
 .interactive-terminal {
   background: var(--terminal-bg);
   border-radius: 12px;

@@ -572,17 +572,19 @@ function App() {
 
       {/* HERO */}
       <section id="hero">
-        <div className="container">
-          <div className="hero-meta">Malang, Indonesia · 2026</div>
-          <h1 className="hero-name">
-            <strong>Surya</strong> builds apps<br />
-            and solves problems.
-          </h1>
-          <p className="hero-sub">
-            <strong>Software Engineer.</strong> Full-stack developer. DevOps enthusiast.
-            Linux enthusiast. I work end-to-end — from idea to deployment.
-          </p>
-          <a className="hero-cta" href="#projects">View projects →</a>
+        <div className="hero-content">
+          <div className="container">
+            <div className="hero-meta">Malang, Indonesia · 2026</div>
+            <h1 className="hero-name">
+              <strong>Surya</strong> builds apps<br />
+              and solves problems.
+            </h1>
+            <p className="hero-sub">
+              <strong>Software Engineer.</strong> Full-stack developer. DevOps enthusiast.
+              Linux enthusiast. I work end-to-end — from idea to deployment.
+            </p>
+            <a className="hero-cta" href="#projects">View projects →</a>
+          </div>
         </div>
         <div className="hero-decoration">
           <Terminal theme={theme} />
