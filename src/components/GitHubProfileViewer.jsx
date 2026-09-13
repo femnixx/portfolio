@@ -164,7 +164,7 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
   }, [commitActivity])
 
   const getPunchColor = (val) => {
-    if (val === 0) return 'var(--bg-alt)'
+    if (val === 0) return 'var(--bg)'
     return 'var(--accent-green)'
   }
 
