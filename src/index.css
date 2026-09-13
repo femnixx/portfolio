@@ -28,6 +28,34 @@
   --terminal-cursor: #A6D189;
 }
 
+[data-theme="latte"] {
+  --bg: #EFF1F5;
+  --bg-alt: #E6E9EF;
+  --bg-surface: #DCE0E8;
+  --text: #4C4F69;
+  --text-muted: #6C6F85;
+  --border: #CCD0DA;
+  --accent: #1E66F5;
+  --accent-green: #40A02B;
+  --accent-red: #D20F39;
+  --accent-yellow: #DF8E1D;
+  --accent-peach: #FE640B;
+  --accent-pink: #EA76CB;
+  --accent-mauve: #8839EF;
+  --accent-teal: #179299;
+  --accent-blue: #1E66F5;
+  --preview-bg: #E6E9EF;
+  --preview-border: #CCD0DA;
+  --cat: #9CA0B0;
+  --terminal-bg: #DCE0E8;
+  --terminal-header: #CCD0DA;
+  --terminal-text: #4C4F69;
+  --terminal-comment: #9CA0B0;
+  --terminal-prompt: #EA76CB;
+  --terminal-cmd: #4C4F69;
+  --terminal-cursor: #40A02B;
+}
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -87,6 +115,21 @@ nav {
 }
 
 .nav-links a:hover { color: var(--text); }
+
+.theme-toggle {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.15s;
+}
+
+.theme-toggle:hover { opacity: 0.7; }
 
 /* SECTIONS */
 section {
@@ -256,15 +299,36 @@ section:last-of-type {
   align-items: center;
 }
 
-.terminal-input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--terminal-text);
+.terminal-text-display {
+  color: var(--terminal-cmd);
   font-family: 'DM Mono', monospace;
   font-size: 0.82rem;
-  flex: 1;
-  caret-color: var(--terminal-cursor);
+  white-space: pre;
+  letter-spacing: 0;
+}
+
+.terminal-cursor-block {
+  display: inline-block;
+  width: 0.65em;
+  height: 1.15em;
+  background: var(--terminal-cursor);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  flex-shrink: 0;
+}
+
+.terminal-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .terminal-help-grid {

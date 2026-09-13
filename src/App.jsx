@@ -140,17 +140,25 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function Terminal() {
+function Terminal({ theme }) {
   const [history, setHistory] = React.useState([
-    { type: 'output', text: 'Welcome to Surya\'s portfolio terminal!' },
+    { type: 'output', text: `Welcome to Surya's portfolio terminal! (${theme} theme)` },
     { type: 'output', text: 'Type "help" to see available commands.' },
   ])
   const [input, setInput] = React.useState('')
+  const [focused, setFocused] = React.useState(false)
   const endRef = React.useRef(null)
+  const hiddenRef = React.useRef(null)
 
   React.useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [history])
+
+  React.useEffect(() => {
+    if (focused) {
+      hiddenRef.current?.focus()
+    }
+  }, [focused])
 
   const processCommand = (cmd) => {
     const trimmed = cmd.trim().toLowerCase()
@@ -172,6 +180,7 @@ function Terminal() {
           { cmd: 'whoami', desc: 'Who am I' },
           { cmd: 'ls', desc: 'List sections' },
           { cmd: 'clear', desc: 'Clear terminal' },
+          { cmd: 'theme', desc: 'Toggle theme: frappe/latte' },
         ],
       }
     } else if (trimmed === 'about') {
@@ -204,7 +213,7 @@ function Terminal() {
         type: 'output',
         text: `OS: Arch Linux x86_64
 Shell: zsh 5.9
-Theme: Catppuccin Frappe
+Theme: Catppuccin ${theme === 'frappe' ? 'Frappe' : 'Latte'}
 Terminal: kitty
 CPU: AMD Ryzen 9 5900X
 Memory: 32GB DDR4
@@ -223,6 +232,16 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
     } else if (trimmed === 'clear') {
       setHistory([])
       return
+    } else if (trimmed === 'theme') {
+      const newTheme = theme === 'frappe' ? 'latte' : 'frappe'
+      response = {
+        type: 'output',
+        text: `Theme switched to ${newTheme}. (Refresh to fully apply)`,
+      }
+      setTimeout(() => {
+        document.documentElement.setAttribute('data-theme', newTheme)
+        localStorage.setItem('theme', newTheme)
+      }, 500)
     } else if (trimmed === '') {
       return
     } else {
@@ -242,7 +261,7 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
   }
 
   return (
-    <div className="interactive-terminal">
+    <div className="interactive-terminal" onClick={() => setFocused(true)}>
       <div className="terminal-header">
         <div className="terminal-dots">
           <span className="terminal-dot red" />
@@ -280,13 +299,17 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
         ))}
         <form onSubmit={handleSubmit} className="terminal-input-row">
           <span className="terminal-prompt">➜</span>
+          <span className="terminal-text-display">{input}</span>
+          <span className="terminal-cursor-block" />
           <input
+            ref={hiddenRef}
             className="terminal-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a command..."
-            autoFocus
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            autoFocus={focused}
           />
         </form>
         <div ref={endRef} />
@@ -487,6 +510,12 @@ function App() {
   const [openProjects, setOpenProjects] = React.useState({})
   const [githubProfile, setGithubProfile] = React.useState(null)
   const [githubRepos, setGithubRepos] = React.useState([])
+  const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'frappe')
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   React.useEffect(() => {
     fetch('https://api.github.com/users/femnixx')
@@ -504,6 +533,10 @@ function App() {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
+  const toggleTheme = () => {
+    setTheme((t) => (t === 'frappe' ? 'latte' : 'frappe'))
+  }
+
   return (
     <>
       <nav>
@@ -514,6 +547,7 @@ function App() {
           <li><a href="#github">GitHub</a></li>
           <li><a href="#games">Games</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><button className="theme-toggle" onClick={toggleTheme}>{theme === 'frappe' ? '☀️' : '🌙'}</button></li>
         </ul>
       </nav>
 
@@ -532,7 +566,7 @@ function App() {
           <a className="hero-cta" href="#projects">View projects →</a>
         </div>
         <div className="hero-decoration">
-          <Terminal />
+          <Terminal theme={theme} />
         </div>
       </section>
 
