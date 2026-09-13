@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './index.css'
 import GitHubProfileViewer from './components/GitHubProfileViewer'
 
@@ -141,7 +141,7 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function Terminal({ theme }) {
+function Terminal({ theme, sticky }) {
   const [history, setHistory] = useState([
     { type: 'output', text: `Welcome to Surya's portfolio terminal! (${theme} theme)` },
     { type: 'output', text: 'Type "help" to see available commands.' },
@@ -262,7 +262,7 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
   }
 
   return (
-    <div className="interactive-terminal" onClick={() => setFocused(true)}>
+    <div className={`interactive-terminal ${sticky ? 'sticky' : ''}`} onClick={() => setFocused(true)}>
       <div className="terminal-header">
         <div className="terminal-dots">
           <span className="terminal-dot red" />
@@ -515,6 +515,7 @@ function App() {
   const [openProjects, setOpenProjects] = useState({})
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'frappe')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [terminalSticky, setTerminalSticky] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -548,6 +549,18 @@ function App() {
         </ul>
       </nav>
 
+      {terminalSticky && (
+        <div className="terminal-fab" onClick={() => setTerminalSticky(false)}>
+          <span>⌨️</span>
+        </div>
+      )}
+
+      {!terminalSticky && (
+        <button className="terminal-toggle" onClick={() => setTerminalSticky(true)}>
+          ⌨️ Terminal
+        </button>
+      )}
+
       {/* HERO */}
       <section id="hero">
         <div className="hero-content">
@@ -564,8 +577,8 @@ function App() {
             <a className="hero-cta" href="#projects">View projects →</a>
           </div>
         </div>
-        <div className="hero-decoration">
-          <Terminal theme={theme} />
+        <div className={`hero-decoration ${terminalSticky ? 'sticky-active' : ''}`}>
+          <Terminal theme={theme} sticky={terminalSticky} />
         </div>
       </section>
 

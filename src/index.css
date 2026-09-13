@@ -204,6 +204,10 @@ section:last-of-type {
   bottom: auto;
 }
 
+.hero-decoration.sticky-active {
+  display: none;
+}
+
 @media (min-width: 901px) {
   .hero-content {
     max-width: 50%;
@@ -216,6 +220,66 @@ section:last-of-type {
     bottom: 6rem;
     width: 380px;
   }
+  .hero-decoration.sticky-active {
+    display: none;
+  }
+}
+
+.terminal-toggle {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99;
+  padding: 0.75rem 1.25rem;
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.terminal-toggle:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.terminal-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99;
+  width: 56px;
+  height: 56px;
+  background: var(--terminal-bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  transition: transform 0.15s;
+}
+
+.terminal-fab:hover {
+  transform: scale(1.1);
+}
+
+.interactive-terminal.sticky {
+  position: fixed;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+  z-index: 98;
+  width: 380px;
+  max-height: 80vh;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 
 .hero-meta {
@@ -302,6 +366,10 @@ section:last-of-type {
   font-size: 0.75rem;
   color: var(--text-muted);
   letter-spacing: 0.02em;
+}
+
+.interactive-terminal.sticky .terminal-body {
+  max-height: 60vh;
 }
 
 .terminal-body {
@@ -1046,6 +1114,29 @@ footer {
   }
   .nav-links.open {
     right: 0;
+  }
+  .interactive-terminal.sticky {
+    position: fixed;
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    max-height: 60vh;
+    transform: none;
+  }
+  .terminal-toggle {
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+  }
+  .terminal-fab {
+    bottom: 1rem;
+    right: 1rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
   }
 }
 
