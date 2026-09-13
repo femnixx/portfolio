@@ -143,8 +143,8 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
 
 function Terminal({ theme, sticky }) {
   const [history, setHistory] = useState([
-    { type: 'output', text: `Welcome to Surya's portfolio terminal! (${theme} theme)` },
-    { type: 'output', text: 'Type "help" to see available commands.' },
+    { type: 'output', text: `Hey there! 👋 I'm Surya's portfolio terminal.` },
+    { type: 'output', text: 'You can chat with me — try asking about me, my projects, skills, or just type "help" to see what I can do.' },
   ])
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
@@ -171,43 +171,42 @@ function Terminal({ theme, sticky }) {
       response = {
         type: 'help',
         commands: [
-          { cmd: 'help', desc: 'Show available commands' },
-          { cmd: 'about', desc: 'About me' },
-          { cmd: 'projects', desc: 'List my projects' },
+          { cmd: 'about', desc: 'Learn about me' },
+          { cmd: 'projects', desc: 'See my projects' },
           { cmd: 'skills', desc: 'My tech stack' },
-          { cmd: 'contact', desc: 'Contact info' },
-          { cmd: 'github', desc: 'GitHub profile' },
-          { cmd: 'neofetch', desc: 'System info' },
+          { cmd: 'contact', desc: 'How to reach me' },
+          { cmd: 'github', desc: 'Visit my GitHub' },
+          { cmd: 'neofetch', desc: 'My system specs' },
           { cmd: 'whoami', desc: 'Who am I' },
-          { cmd: 'ls', desc: 'List sections' },
-          { cmd: 'clear', desc: 'Clear terminal' },
-          { cmd: 'theme', desc: 'Toggle theme: frappe/latte' },
+          { cmd: 'ls', desc: 'Explore sections' },
+          { cmd: 'clear', desc: 'Clear chat' },
+          { cmd: 'theme', desc: 'Toggle theme' },
         ],
       }
     } else if (trimmed === 'about') {
       response = {
         type: 'output',
-        text: "I'm a 19-year-old Computer Science student from Malang, Indonesia. I build mobile and web apps end-to-end — from idea to deployment. Always learning, always shipping.",
+        text: "I'm a 19-year-old Computer Science student from Malang, Indonesia. I build mobile and web apps end-to-end — from idea to deployment. Always learning, always shipping. 🚀",
       }
     } else if (trimmed === 'projects') {
       response = {
         type: 'output',
-        text: 'Jaganalar, ZELOW, Phishing Email Detector, Foodmind, Laravel Dashboard, Mining Technical Test, Auto File Sorter, Dockerized Todo App',
+        text: 'Here are my main projects:\n• Jaganalar — Educational app for fake news detection\n• ZELOW — Public safety mobile app\n• Phishing Email Detector — AI/ML security tool\n• Foodmind — Web-based nutrition tracker\n• Laravel Dashboard — Admin dashboard\n• Mining Technical Test — Data processing challenge\n• Auto File Sorter — Python automation tool\n• Dockerized Todo App — Full-stack todo app\n\nType "help" to learn more about any of these!',
       }
     } else if (trimmed === 'skills') {
       response = {
         type: 'output',
-        text: 'Flutter · React · Next.js · Node.js · Laravel · Firebase · MongoDB · Python · Docker · Linux · DevOps',
+        text: 'My tech stack:\n💻 Flutter · React · Next.js · Node.js\n🔧 Laravel · PHP · Firebase · MongoDB\n🐍 Python · Docker · Linux · DevOps\n\nI\'m always learning new things!',
       }
     } else if (trimmed === 'contact') {
       response = {
         type: 'output',
-        text: 'WhatsApp: +62 822-4896-9863 | Email: suryarpadipta06@gmail.com | GitHub: @femnixx',
+        text: 'Feel free to reach out!\n📱 WhatsApp: +62 822-4896-9863\n📧 Email: suryarpadipta06@gmail.com\n💻 GitHub: @femnixx\n\nI\'m open to freelance work and collaborations!',
       }
     } else if (trimmed === 'github') {
       response = {
         type: 'output',
-        text: 'Opening GitHub profile... https://github.com/femnixx',
+        text: 'Opening my GitHub profile... 👉 https://github.com/femnixx',
       }
     } else if (trimmed === 'neofetch') {
       response = {
@@ -223,7 +222,7 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
     } else if (trimmed === 'whoami') {
       response = {
         type: 'output',
-        text: 'Surya Pradipta — Software Engineer, DevOps Enthusiast, Linux User',
+        text: 'Surya Pradipta — Software Engineer, DevOps Enthusiast, Linux User 🐧',
       }
     } else if (trimmed === 'ls') {
       response = {
@@ -248,7 +247,7 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
     } else {
       response = {
         type: 'error',
-        text: `Command not found: ${trimmed}. Type "help" for available commands.`,
+        text: `Hmm, I'm not sure what you mean by "${cmd}". Type "help" to see what I can do! 😅`,
       }
     }
 
@@ -269,7 +268,10 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
           <span className="terminal-dot yellow" />
           <span className="terminal-dot green" />
         </div>
-        <div className="terminal-title">femnixx@portfolio:~</div>
+        <div className="terminal-title">
+          femnixx@portfolio:~ 
+          <span className="terminal-subtitle">— portfolio assistant</span>
+        </div>
       </div>
       <div className="terminal-body">
         {history.map((line, i) => (
@@ -515,7 +517,7 @@ function App() {
   const [openProjects, setOpenProjects] = useState({})
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'frappe')
   const [menuOpen, setMenuOpen] = useState(false)
-  const [terminalSticky, setTerminalSticky] = useState(false)
+  const [terminalOpen, setTerminalOpen] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -549,14 +551,8 @@ function App() {
         </ul>
       </nav>
 
-      {terminalSticky && (
-        <div className="terminal-fab" onClick={() => setTerminalSticky(false)}>
-          <span>⌨️</span>
-        </div>
-      )}
-
-      {!terminalSticky && (
-        <button className="terminal-toggle" onClick={() => setTerminalSticky(true)}>
+      {!terminalOpen && (
+        <button className="terminal-toggle" onClick={() => setTerminalOpen(true)}>
           ⌨️ Terminal
         </button>
       )}
@@ -576,9 +572,6 @@ function App() {
             </p>
             <a className="hero-cta" href="#projects">View projects →</a>
           </div>
-        </div>
-        <div className={`hero-decoration ${terminalSticky ? 'sticky-active' : ''}`}>
-          <Terminal theme={theme} sticky={terminalSticky} />
         </div>
       </section>
 
@@ -706,6 +699,24 @@ function App() {
         <span>Surya Pradipta · Malang, Indonesia</span>
         <span>2026</span>
       </footer>
+
+      {terminalOpen && (
+        <div className="terminal-widget">
+          <div className="terminal-widget-header">
+            <span>Terminal</span>
+            <button className="terminal-widget-close" onClick={() => setTerminalOpen(false)}>
+              ✕
+            </button>
+          </div>
+          <Terminal theme={theme} />
+        </div>
+      )}
+
+      {!terminalOpen && (
+        <button className="terminal-toggle" onClick={() => setTerminalOpen(true)}>
+          ⌨️ Terminal
+        </button>
+      )}
     </>
   )
 }

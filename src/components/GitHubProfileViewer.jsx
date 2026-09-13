@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  ResponsiveContainer,
+} from 'recharts'
 import './GitHubProfileViewer.css'
 
 const LANGUAGE_COLORS = {
@@ -36,40 +43,33 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
   const [error, setError] = useState(null)
   const [rateLimit, setRateLimit] = useState(null)
 
-  const calculateActivityStats = (eventsList) => {
-    if (!Array.isArray(eventsList)) {
-      return { commits: 0, reviews: 0, prs: 0, issues: 0, total: 0 }
-    }
-
-    let commits = 0
-    let reviews = 0
-    let prs = 0
-    let issues = 0
-
-    eventsList.forEach((event) => {
-      if (event.type === 'PushEvent') {
-        commits += event.payload?.size || 0
-      } else if (event.type === 'PullRequestReviewEvent') {
-        reviews++
-      } else if (event.type === 'PullRequestEvent') {
-        prs++
-      } else if (event.type === 'IssuesEvent') {
-        issues++
+  const calculateLanguageStats = (reposList) => {
+    const counts = {}
+    reposList.forEach((repo) => {
+      const lang = repo.language
+      if (lang) {
+        counts[lang] = (counts[lang] || 0) + 1
       }
     })
 
-    const total = commits + reviews + prs + issues
-    return {
-      commits,
-      reviews,
-      prs,
-      issues,
-      total,
-      commitsPct: total ? Math.round((commits / total) * 100) : 0,
-      reviewsPct: total ? Math.round((reviews / total) * 100) : 0,
-      prsPct: total ? Math.round((prs / total) * 100) : 0,
-      issuesPct: total ? Math.round((issues / total) * 100) : 0,
-    }
+    const sorted = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+
+    const total = sorted.reduce((sum, [, count]) => sum + count, 0)
+    return sorted.map(([lang, count]) => ({
+      language: lang,
+      count,
+      pct: total ? Math.round((count / total) * 100) : 0,
+      color: getLanguageColor(lang),
+    }))
+  }
+
+  const fetchWithTimeout = (url, ms = 12000) => {
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), ms)
+    )
+    return Promise.race([fetch(url), timeout])
   }
 
   const fetchData = async (name) => {
@@ -80,13 +80,12 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     setRateLimit(null)
 
     try {
-      const [profileRes, reposRes, eventsRes] = await Promise.all([
-        fetch(`https://api.github.com/users/${name}`),
-        fetch(`https://api.github.com/users/${name}/repos?sort=updated&per_page=10`),
-        fetch(`https://api.github.com/users/${name}/events/public?per_page=100`),
+      const [profileRes, reposRes] = await Promise.all([
+        fetchWithTimeout(`https://api.github.com/users/${name}`),
+        fetchWithTimeout(`https://api.github.com/users/${name}/repos?sort=updated&per_page=100`),
       ])
 
-      if (profileRes.status === 403 || reposRes.status === 403 || eventsRes.status === 403) {
+      if (profileRes.status === 403 || reposRes.status === 403) {
         const resetTime = profileRes.headers.get('X-RateLimit-Reset')
         const resetDate = resetTime ? new Date(parseInt(resetTime) * 1000) : null
         setRateLimit({
@@ -103,17 +102,15 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
         return
       }
 
-      if (!profileRes.ok || !reposRes.ok || !eventsRes.ok) {
+      if (!profileRes.ok || !reposRes.ok) {
         throw new Error('Failed to fetch GitHub data')
       }
 
       const profileData = await profileRes.json()
       const reposData = await reposRes.json()
-      const eventsData = await eventsRes.json()
 
       setProfile(profileData)
       setRepos(Array.isArray(reposData) ? reposData : [])
-      setEvents(Array.isArray(eventsData) ? eventsData : [])
       setUsername(name)
     } catch (err) {
       setError(err.message || 'Something went wrong')
@@ -131,13 +128,19 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     fetchData(input)
   }
 
-  const stats = calculateActivityStats(events)
+  const languageStats = calculateLanguageStats(repos)
 
   const orgs = [
     { name: 'Raion-Community', url: 'https://github.com/Raion-Community' },
     { name: 'sync-up-org', url: 'https://github.com/sync-up-org' },
     { name: 'Raion-Mobile-Engineer', url: 'https://github.com/Raion-Mobile-Engineer' },
   ]
+
+  const radarData = languageStats.map((item) => ({
+    subject: `${item.pct}%\n${item.language}`,
+    value: Math.max(item.pct, 5),
+    color: item.color,
+  }))
 
   return (
     <div className="gh-viewer">
@@ -204,36 +207,43 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
           </div>
 
           <div className="gh-section">
-            <div className="gh-section-title">Activity Distribution</div>
-            <div className="gh-chart">
-              <div className="gh-chart-row">
-                <span className="gh-chart-label">Commits</span>
-                <div className="gh-chart-bar-bg">
-                  <div className="gh-chart-bar" style={{ width: `${stats.commitsPct}%`, background: 'var(--accent-green)' }} />
-                </div>
-                <span className="gh-chart-value">{stats.commitsPct}%</span>
-              </div>
-              <div className="gh-chart-row">
-                <span className="gh-chart-label">Code Reviews</span>
-                <div className="gh-chart-bar-bg">
-                  <div className="gh-chart-bar" style={{ width: `${stats.reviewsPct}%`, background: 'var(--accent-mauve)' }} />
-                </div>
-                <span className="gh-chart-value">{stats.reviewsPct}%</span>
-              </div>
-              <div className="gh-chart-row">
-                <span className="gh-chart-label">Pull Requests</span>
-                <div className="gh-chart-bar-bg">
-                  <div className="gh-chart-bar" style={{ width: `${stats.prsPct}%`, background: 'var(--accent-blue)' }} />
-                </div>
-                <span className="gh-chart-value">{stats.prsPct}%</span>
-              </div>
-              <div className="gh-chart-row">
-                <span className="gh-chart-label">Issues</span>
-                <div className="gh-chart-bar-bg">
-                  <div className="gh-chart-bar" style={{ width: `${stats.issuesPct}%`, background: 'var(--accent-peach)' }} />
-                </div>
-                <span className="gh-chart-value">{stats.issuesPct}%</span>
-              </div>
+            <div className="gh-section-title">Language Overview</div>
+            <div className="gh-radar-container">
+              {radarData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                    <PolarGrid stroke="var(--border)" />
+                    <PolarAngleAxis
+                      dataKey="subject"
+                      stroke="var(--text-muted)"
+                      tick={({ x, y, payload }) => {
+                        const lines = payload.value.split('\n')
+                        const color = radarData[payload.index]?.color || 'var(--accent-mauve)'
+                        return (
+                          <text x={x} y={y} fill="var(--text-muted)" fontSize={12} textAnchor="middle">
+                            <tspan x={x} dy="-0.2em" fontWeight="bold" fill={color}>
+                              {lines[0]}
+                            </tspan>
+                            <tspan x={x} dy="1.2em">
+                              {lines[1]}
+                            </tspan>
+                          </text>
+                        )
+                      }}
+                    />
+                    <Radar
+                      dataKey="value"
+                      stroke="var(--accent-green)"
+                      fill="var(--accent-green)"
+                      fillOpacity={0.35}
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: 'var(--accent-green)', stroke: '#ffffff', strokeWidth: 1 }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="gh-radar-loading">No language data available</div>
+              )}
             </div>
           </div>
         </div>
