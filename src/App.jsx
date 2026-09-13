@@ -140,10 +140,13 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function EntranceAnimation() {
+function EntranceAnimation({ onEnter }) {
   return (
-    <div className="entrance-overlay">
-      <div className="entrance-content">Surya Pradipta</div>
+    <div className="entrance-overlay" onClick={onEnter}>
+      <div className="entrance-content">
+        <div className="entrance-name">Surya Pradipta</div>
+        <div className="entrance-hint">Click anywhere to enter</div>
+      </div>
     </div>
   )
 }
@@ -163,6 +166,58 @@ function Cat() {
           <div className="cat-paw right" />
         </div>
         <div className="cat-tail" />
+      </div>
+    </div>
+  )
+}
+
+function GitHubDecorations({ profile, repos }) {
+  if (!profile) return null
+
+  const langs = {}
+  repos?.forEach((repo) => {
+    if (repo.language) {
+      langs[repo.language] = (langs[repo.language] || 0) + 1
+    }
+  })
+
+  const topLangs = Object.entries(langs)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+
+  return (
+    <div className="github-decorations">
+      <div className="github-card">
+        <div className="github-card-header">
+          <img src={profile.avatar_url} alt="avatar" className="github-avatar" />
+          <div>
+            <div className="github-name">{profile.name || profile.login}</div>
+            <div className="github-login">@{profile.login}</div>
+          </div>
+        </div>
+        {profile.bio && <div className="github-bio">{profile.bio}</div>}
+        <div className="github-stats">
+          <span>📦 {profile.public_repos}</span>
+          <span>👥 {profile.followers}</span>
+          <span>📍 {profile.location || 'Indonesia'}</span>
+        </div>
+        {topLangs.length > 0 && (
+          <div className="github-langs">
+            {topLangs.map(([lang, count]) => (
+              <span key={lang} className="github-lang-tag">
+                {lang} ×{count}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="github-repos">
+        {repos?.slice(0, 4).map((repo) => (
+          <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="github-repo-link">
+            <div className="github-repo-name">{repo.name}</div>
+            <div className="github-repo-lang">{repo.language}</div>
+          </a>
+        ))}
       </div>
     </div>
   )
@@ -217,7 +272,7 @@ function ClickSpeedGame() {
 }
 
 function ReactionGame() {
-  const [state, setState] = React.useState('waiting') // waiting, ready, go, result
+  const [state, setState] = React.useState('waiting')
   const [time, setTime] = React.useState(0)
   const [startTime, setStartTime] = React.useState(0)
   const [best, setBest] = React.useState(null)
@@ -358,6 +413,21 @@ function MemoryGame() {
 
 function App() {
   const [openProjects, setOpenProjects] = React.useState({})
+  const [entered, setEntered] = React.useState(false)
+  const [githubProfile, setGithubProfile] = React.useState(null)
+  const [githubRepos, setGithubRepos] = React.useState([])
+
+  React.useEffect(() => {
+    fetch('https://api.github.com/users/femnixx')
+      .then((r) => r.json())
+      .then(setGithubProfile)
+      .catch(() => {})
+
+    fetch('https://api.github.com/users/femnixx/repos?sort=updated&per_page=8')
+      .then((r) => r.json())
+      .then(setGithubRepos)
+      .catch(() => {})
+  }, [])
 
   const toggleProject = (id) => {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -365,8 +435,8 @@ function App() {
 
   return (
     <>
-      <EntranceAnimation />
-      <nav>
+      {!entered && <EntranceAnimation onEnter={() => setEntered(true)} />}
+      <nav className={entered ? 'nav-visible' : ''}>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
@@ -385,8 +455,8 @@ function App() {
             and solves problems.
           </h1>
           <p className="hero-sub">
-            Computer Science student. Full-stack developer. I work end-to-end —
-            from idea to deployment. Always learning, always shipping.
+            <strong>Software Engineer.</strong> Full-stack developer. DevOps enthusiast.
+            Linux enthusiast. I work end-to-end — from idea to deployment.
           </p>
           <a className="hero-cta" href="#projects">View projects →</a>
         </div>
@@ -438,7 +508,7 @@ function App() {
       {/* GAMES */}
       <section id="games">
         <div className="container">
-          <div className="section-header">04 — Mini Games</div>
+          <div className="section-header">03 — Mini Games</div>
           <p className="games-intro">A few small browser games I built for fun. Click, match, and test your reflexes.</p>
           <div className="games-grid">
             <ClickSpeedGame />
@@ -451,14 +521,27 @@ function App() {
       {/* CONTACT */}
       <section id="contact">
         <div className="container">
-          <div className="section-header">05 — Contact</div>
+          <div className="section-header">04 — Contact</div>
           <div className="contact-grid">
             <div>
-              <div className="contact-label">Status</div>
-              <div className="contact-text">
-                Open for freelance work — web apps, mobile apps, backends.
-                <br />
-                Starting from <strong>Rp 1.3jt</strong>.
+              <div className="contact-label">Roles</div>
+              <div className="contact-roles">
+                <div className="role-item">
+                  <span className="role-icon">💻</span>
+                  <span><strong>Software Engineer</strong></span>
+                </div>
+                <div className="role-item">
+                  <span className="role-icon">🔧</span>
+                  <span><strong>DevOps Engineer</strong></span>
+                </div>
+                <div className="role-item">
+                  <span className="role-icon">🐧</span>
+                  <span><strong>Linux Enthusiast</strong></span>
+                </div>
+                <div className="role-item">
+                  <span className="role-icon">📱</span>
+                  <span><strong>Mobile Developer</strong></span>
+                </div>
               </div>
             </div>
             <div>
@@ -496,6 +579,8 @@ function App() {
         <span>Surya Pradipta · Malang, Indonesia</span>
         <span>2026</span>
       </footer>
+
+      <GitHubDecorations profile={githubProfile} repos={githubRepos} />
     </>
   )
 }
