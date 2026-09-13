@@ -10,6 +10,7 @@
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+  animation: ghFadeIn 0.5s ease;
 }
 
 .gh-input {
@@ -22,11 +23,12 @@
   font-family: 'DM Mono', monospace;
   font-size: 0.85rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .gh-input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(138, 170, 238, 0.15);
 }
 
 .gh-btn {
@@ -40,12 +42,17 @@
   cursor: pointer;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.15s;
   white-space: nowrap;
 }
 
 .gh-btn:hover:not(:disabled) {
-  opacity: 0.8;
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.gh-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .gh-btn:disabled {
@@ -61,6 +68,22 @@
   color: var(--accent-red);
   font-size: 0.85rem;
   margin-bottom: 1rem;
+  animation: ghSlideIn 0.3s ease;
+}
+
+@keyframes ghFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ghSlideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ghPunchFade {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .gh-top-row {
@@ -79,6 +102,13 @@
   border-radius: 12px;
   align-items: center;
   box-sizing: border-box;
+  animation: ghFadeIn 0.5s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gh-profile-header:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
 .gh-avatar-large {
@@ -145,6 +175,18 @@
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
+  animation: ghFadeIn 0.5s ease backwards;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.gh-quick-card:nth-child(1) { animation-delay: 0.05s; }
+.gh-quick-card:nth-child(2) { animation-delay: 0.1s; }
+.gh-quick-card:nth-child(3) { animation-delay: 0.15s; }
+
+.gh-quick-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .gh-quick-label {
@@ -175,6 +217,15 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   box-sizing: border-box;
+  animation: ghFadeIn 0.5s ease backwards;
+}
+
+.gh-radar-section {
+  animation-delay: 0.1s;
+}
+
+.gh-punch-section {
+  animation-delay: 0.15s;
 }
 
 .gh-section-title {
@@ -269,6 +320,13 @@
   flex-shrink: 0;
   cursor: pointer;
   position: relative;
+  transition: transform 0.15s, opacity 0.15s;
+  animation: ghPunchFade 0.3s ease backwards;
+}
+
+.gh-punch-cell:hover {
+  transform: scale(1.6);
+  z-index: 5;
 }
 
 .gh-punch-cell:hover::after {
@@ -317,12 +375,15 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   box-sizing: border-box;
+  animation: ghFadeIn 0.5s ease backwards;
 }
 
-.gh-repos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.75rem;
+.gh-repos-section {
+  animation-delay: 0.2s;
+}
+
+.gh-activity-section {
+  animation-delay: 0.25s;
 }
 
 .gh-repo-card {
@@ -331,15 +392,25 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   text-decoration: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   box-sizing: border-box;
+  animation: ghFadeIn 0.4s ease backwards;
 }
+
+.gh-repo-card:nth-child(1) { animation-delay: 0.25s; }
+.gh-repo-card:nth-child(2) { animation-delay: 0.3s; }
+.gh-repo-card:nth-child(3) { animation-delay: 0.35s; }
+.gh-repo-card:nth-child(4) { animation-delay: 0.4s; }
+.gh-repo-card:nth-child(5) { animation-delay: 0.45s; }
+.gh-repo-card:nth-child(6) { animation-delay: 0.5s; }
 
 .gh-repo-card:hover {
   border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .gh-repo-card-header {
@@ -393,6 +464,20 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   box-sizing: border-box;
+  animation: ghSlideIn 0.3s ease backwards;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.gh-activity-item:nth-child(1) { animation-delay: 0.3s; }
+.gh-activity-item:nth-child(2) { animation-delay: 0.35s; }
+.gh-activity-item:nth-child(3) { animation-delay: 0.4s; }
+.gh-activity-item:nth-child(4) { animation-delay: 0.45s; }
+.gh-activity-item:nth-child(5) { animation-delay: 0.5s; }
+.gh-activity-item:nth-child(n+6) { animation-delay: 0.55s; }
+
+.gh-activity-item:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
 }
 
 .gh-activity-icon {

@@ -345,7 +345,7 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                     ))}
                   </div>
                 </div>
-                <div className="gh-punch-grid">
+                 <div className="gh-punch-grid">
                   {DAYS.map((day) => (
                     <div key={day} className="gh-punch-row">
                       <div className="gh-punch-day">{day}</div>
@@ -354,11 +354,12 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                           const val = commitActivity[DAYS.indexOf(day)][hour]
                           const nextHour = (hour + 1) % 24
                           const tooltipText = `${day} ${hour.toString().padStart(2, '0')}:00–${nextHour.toString().padStart(2, '0')}:00: ${val} commit${val !== 1 ? 's' : ''}`
+                          const delay = (DAYS.indexOf(day) * 24 + hour) * 0.003
                           return (
                             <div
                               key={hour}
                               className="gh-punch-cell"
-                              style={{ background: getPunchColor(val) }}
+                              style={{ background: getPunchColor(val), animationDelay: `${delay}s` }}
                               data-tooltip={tooltipText}
                             />
                           )
