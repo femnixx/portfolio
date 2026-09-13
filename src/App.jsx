@@ -140,27 +140,6 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function LinuxDecorations() {
-  return (
-    <div className="linux-decorations">
-      <div className="linux-tux">🐧</div>
-      <div className="linux-ascii">
-{`  ██████╗ ██╗    ██╗███╗   ██╗
-  ██╔══██╗██║    ██║████╗  ██║
-  ██████╔╝██║ █╗ ██║██╔██╗ ██║
-  ██╔═══╝ ██║███╗██║██║╚██╗██║
-  ██║     ╚███╔███╔╝██║ ╚████║
-  ╚═╝      ╚══╝╚══╝ ╚═╝  ╚═══╝`}
-      </div>
-      <div className="linux-command">
-        <div className="linux-command-line">$ neofetch</div>
-        <div className="linux-command-line">$ uptime</div>
-        <div className="linux-command-line">$ htop</div>
-      </div>
-    </div>
-  )
-}
-
 function Terminal({ theme }) {
   const [history, setHistory] = React.useState([
     { type: 'output', text: `Welcome to Surya's portfolio terminal! (${theme} theme)` },
@@ -560,7 +539,6 @@ function App() {
 
   return (
     <>
-      <LinuxDecorations />
       <nav>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
         <ul className="nav-links">
