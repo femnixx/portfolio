@@ -2,14 +2,14 @@ import React from 'react'
 import './index.css'
 
 const colorMap = {
-  green: '#10B981',
-  blue: '#3B82F6',
-  purple: '#8B5CF6',
-  orange: '#F59E0B',
-  pink: '#EC4899',
-  teal: '#14B8A6',
-  red: '#EF4444',
-  indigo: '#6366F1',
+  green: '#A6D189',
+  blue: '#8CAAEE',
+  purple: '#CA9EE6',
+  orange: '#E5C890',
+  pink: '#F4B8E4',
+  teal: '#81C8BE',
+  red: '#E78284',
+  indigo: '#BABBF1',
 }
 
 const projects = [
@@ -109,7 +109,7 @@ const projects = [
 ]
 
 function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
-  const accentColor = colorMap[accent] || '#000000'
+  const accentColor = colorMap[accent] || '#8CAAEE'
   return (
     <div className={`project-row ${isOpen ? 'open' : ''}`} onClick={onClick}>
       <div className="project-row-left">
@@ -140,9 +140,109 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
-function LinuxTerminal() {
+function Terminal() {
+  const [history, setHistory] = React.useState([
+    { type: 'output', text: 'Welcome to Surya\'s portfolio terminal!' },
+    { type: 'output', text: 'Type "help" to see available commands.' },
+  ])
+  const [input, setInput] = React.useState('')
+  const endRef = React.useRef(null)
+
+  React.useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [history])
+
+  const processCommand = (cmd) => {
+    const trimmed = cmd.trim().toLowerCase()
+    setHistory((prev) => [...prev, { type: 'command', text: cmd }])
+
+    let response = null
+
+    if (trimmed === 'help') {
+      response = {
+        type: 'help',
+        commands: [
+          { cmd: 'help', desc: 'Show available commands' },
+          { cmd: 'about', desc: 'About me' },
+          { cmd: 'projects', desc: 'List my projects' },
+          { cmd: 'skills', desc: 'My tech stack' },
+          { cmd: 'contact', desc: 'Contact info' },
+          { cmd: 'github', desc: 'GitHub profile' },
+          { cmd: 'neofetch', desc: 'System info' },
+          { cmd: 'whoami', desc: 'Who am I' },
+          { cmd: 'ls', desc: 'List sections' },
+          { cmd: 'clear', desc: 'Clear terminal' },
+        ],
+      }
+    } else if (trimmed === 'about') {
+      response = {
+        type: 'output',
+        text: "I'm a 19-year-old Computer Science student from Malang, Indonesia. I build mobile and web apps end-to-end — from idea to deployment. Always learning, always shipping.",
+      }
+    } else if (trimmed === 'projects') {
+      response = {
+        type: 'output',
+        text: 'Jaganalar, ZELOW, Phishing Email Detector, Foodmind, Laravel Dashboard, Mining Technical Test, Auto File Sorter, Dockerized Todo App',
+      }
+    } else if (trimmed === 'skills') {
+      response = {
+        type: 'output',
+        text: 'Flutter · React · Next.js · Node.js · Laravel · Firebase · MongoDB · Python · Docker · Linux · DevOps',
+      }
+    } else if (trimmed === 'contact') {
+      response = {
+        type: 'output',
+        text: 'WhatsApp: +62 822-4896-9863 | Email: suryarpadipta06@gmail.com | GitHub: @femnixx',
+      }
+    } else if (trimmed === 'github') {
+      response = {
+        type: 'output',
+        text: 'Opening GitHub profile... https://github.com/femnixx',
+      }
+    } else if (trimmed === 'neofetch') {
+      response = {
+        type: 'output',
+        text: `OS: Arch Linux x86_64
+Shell: zsh 5.9
+Theme: Catppuccin Frappe
+Terminal: kitty
+CPU: AMD Ryzen 9 5900X
+Memory: 32GB DDR4
+Uptime: ${Math.floor(Math.random() * 100)} days`,
+      }
+    } else if (trimmed === 'whoami') {
+      response = {
+        type: 'output',
+        text: 'Surya Pradipta — Software Engineer, DevOps Enthusiast, Linux User',
+      }
+    } else if (trimmed === 'ls') {
+      response = {
+        type: 'output',
+        text: 'about/  projects/  games/  contact/  skills.txt  experience.log',
+      }
+    } else if (trimmed === 'clear') {
+      setHistory([])
+      return
+    } else if (trimmed === '') {
+      return
+    } else {
+      response = {
+        type: 'error',
+        text: `Command not found: ${trimmed}. Type "help" for available commands.`,
+      }
+    }
+
+    setHistory((prev) => [...prev, response])
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    processCommand(input)
+    setInput('')
+  }
+
   return (
-    <div className="linux-terminal">
+    <div className="interactive-terminal">
       <div className="terminal-header">
         <div className="terminal-dots">
           <span className="terminal-dot red" />
@@ -152,33 +252,44 @@ function LinuxTerminal() {
         <div className="terminal-title">femnixx@portfolio:~</div>
       </div>
       <div className="terminal-body">
-        <div className="terminal-line">
+        {history.map((line, i) => (
+          <div key={i}>
+            {line.type === 'command' && (
+              <div className="terminal-line">
+                <span className="terminal-prompt">➜</span>
+                <span className="terminal-cmd">{line.text}</span>
+              </div>
+            )}
+            {line.type === 'output' && (
+              <div className="terminal-output">{line.text}</div>
+            )}
+            {line.type === 'error' && (
+              <div className="terminal-output" style={{ color: 'var(--accent-red)' }}>{line.text}</div>
+            )}
+            {line.type === 'help' && (
+              <div className="terminal-help-grid">
+                {line.commands.map((c) => (
+                  <div key={c.cmd}>
+                    <span className="terminal-help-cmd">{c.cmd}</span>
+                    <span className="terminal-help-desc"> — {c.desc}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        <form onSubmit={handleSubmit} className="terminal-input-row">
           <span className="terminal-prompt">➜</span>
-          <span className="terminal-cmd">neofetch</span>
-        </div>
-        <div className="terminal-line terminal-comment">
-          OS: Arch Linux x86_64
-        </div>
-        <div className="terminal-line terminal-comment">
-          Shell: zsh 5.9
-        </div>
-        <div className="terminal-line terminal-comment">
-          Theme: Gruvbox Dark
-        </div>
-        <div className="terminal-line terminal-comment">
-          Terminal: kitty
-        </div>
-        <div className="terminal-line">
-          <span className="terminal-prompt">➜</span>
-          <span className="terminal-cmd">cat /proc/version</span>
-        </div>
-        <div className="terminal-line terminal-comment">
-          Linux version 6.9.3-arch1-1
-        </div>
-        <div className="terminal-line">
-          <span className="terminal-prompt">➜</span>
-          <span className="terminal-cursor">_</span>
-        </div>
+          <input
+            className="terminal-input"
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a command..."
+            autoFocus
+          />
+        </form>
+        <div ref={endRef} />
       </div>
     </div>
   )
@@ -374,6 +485,20 @@ function MemoryGame() {
 
 function App() {
   const [openProjects, setOpenProjects] = React.useState({})
+  const [githubProfile, setGithubProfile] = React.useState(null)
+  const [githubRepos, setGithubRepos] = React.useState([])
+
+  React.useEffect(() => {
+    fetch('https://api.github.com/users/femnixx')
+      .then((r) => r.json())
+      .then(setGithubProfile)
+      .catch(() => {})
+
+    fetch('https://api.github.com/users/femnixx/repos?sort=updated&per_page=8')
+      .then((r) => r.json())
+      .then(setGithubRepos)
+      .catch(() => {})
+  }, [])
 
   const toggleProject = (id) => {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -386,6 +511,7 @@ function App() {
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#projects">Projects</a></li>
+          <li><a href="#github">GitHub</a></li>
           <li><a href="#games">Games</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -406,7 +532,7 @@ function App() {
           <a className="hero-cta" href="#projects">View projects →</a>
         </div>
         <div className="hero-decoration">
-          <LinuxTerminal />
+          <Terminal />
         </div>
       </section>
 
@@ -452,10 +578,48 @@ function App() {
         </div>
       </section>
 
+      {/* GITHUB */}
+      <section id="github">
+        <div className="container">
+          <div className="github-header">03 — GitHub</div>
+          <div className="github-intro">My open source work and recent repositories.</div>
+          {githubProfile && (
+            <div className="github-profile">
+              <img src={githubProfile.avatar_url} alt="avatar" className="github-avatar" />
+              <div className="github-profile-info">
+                <div className="github-profile-name">{githubProfile.name || githubProfile.login}</div>
+                <div className="github-profile-login">@{githubProfile.login}</div>
+                {githubProfile.bio && <div className="github-profile-bio">{githubProfile.bio}</div>}
+                <div className="github-profile-stats">
+                  <span className="github-profile-stat">📦 {githubProfile.public_repos}</span>
+                  <span className="github-profile-stat">👥 {githubProfile.followers}</span>
+                  <span className="github-profile-stat">📍 {githubProfile.location || 'Indonesia'}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="github-repos-grid">
+            {githubRepos.map((repo) => (
+              <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="github-repo-card">
+                <div className="github-repo-name">{repo.name}</div>
+                {repo.description && <div className="github-repo-desc">{repo.description}</div>}
+                <div className="github-repo-meta">
+                  <span className="github-repo-lang">
+                    <span className="github-lang-dot" style={{ background: repo.language ? (repo.language === 'JavaScript' ? '#E5C890' : repo.language === 'PHP' ? '#BABBF1' : repo.language === 'Python' ? '#A6D189' : repo.language === 'Dart' ? '#8CAAEE' : repo.language === 'Java' ? '#E78284' : '#CA9EE6') : 'var(--text-muted)' }} />
+                    {repo.language || 'Unknown'}
+                  </span>
+                  <span>⭐ {repo.stargazers_count}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* GAMES */}
       <section id="games">
         <div className="container">
-          <div className="section-header">03 — Mini Games</div>
+          <div className="section-header">04 — Mini Games</div>
           <p className="games-intro">A few small browser games I built for fun. Click, match, and test your reflexes.</p>
           <div className="games-grid">
             <ClickSpeedGame />
@@ -468,7 +632,7 @@ function App() {
       {/* CONTACT */}
       <section id="contact">
         <div className="container">
-          <div className="section-header">04 — Contact</div>
+          <div className="section-header">05 — Contact</div>
           <div className="contact-grid">
             <div>
               <div className="contact-label">Roles</div>
