@@ -13,6 +13,7 @@ const colorMap = {
 
 const projects = [
   {
+    id: 1,
     title: 'Jaganalar',
     desc: 'Educational app for detecting fake vs. real news. Interactive modules, level progression, AI-powered question generation and user feedback.',
     tags: [
@@ -21,10 +22,10 @@ const projects = [
       { label: 'Solo', color: 'teal' },
     ],
     link: 'https://github.com/femnixx/jaganalar',
-    preview: 'phone',
     accent: 'purple',
   },
   {
+    id: 2,
     title: 'Sigma — Siaga Malang',
     desc: 'Public safety mobile app for real-time emergency reporting, AI analytics, emergency call integration, and news module.',
     tags: [
@@ -33,10 +34,10 @@ const projects = [
       { label: 'Team', color: 'orange' },
     ],
     link: 'https://github.com/Raion-Mobile-Engineer/ZELOW',
-    preview: 'phone',
     accent: 'red',
   },
   {
+    id: 3,
     title: 'Phishing Email Detector',
     desc: 'Tool that detects potential phishing attempts from user-submitted URLs or text using AI/ML models.',
     tags: [
@@ -44,21 +45,10 @@ const projects = [
       { label: 'AI/ML', color: 'indigo' },
     ],
     link: 'https://github.com/femnixx/phishing-email-detector',
-    preview: 'desktop',
     accent: 'indigo',
   },
   {
-    title: 'Audit App — Sekawan Media',
-    desc: 'Internal audit application built for Sekawan Media. Supports structured audits, reporting workflows, and data management.',
-    tags: [
-      { label: 'Laravel', color: 'pink' },
-      { label: 'Full-stack', color: 'teal' },
-    ],
-    link: null,
-    preview: 'dashboard',
-    accent: 'orange',
-  },
-  {
+    id: 4,
     title: 'Laravel Dashboard',
     desc: 'Custom dashboard built with Laravel for admin and analytics use cases.',
     tags: [
@@ -66,10 +56,10 @@ const projects = [
       { label: 'PHP', color: 'indigo' },
     ],
     link: 'https://github.com/femnixx/laravel-dashboard',
-    preview: 'dashboard',
     accent: 'blue',
   },
   {
+    id: 5,
     title: 'Foodmind',
     desc: 'Application focused on food tracking, meal planning, or nutrition management.',
     tags: [
@@ -77,10 +67,10 @@ const projects = [
       { label: 'Mobile', color: 'green' },
     ],
     link: 'https://github.com/femnixx/foodmind',
-    preview: 'phone',
     accent: 'green',
   },
   {
+    id: 6,
     title: 'Mining Technical Test',
     desc: 'Technical project involving data processing and algorithmic challenges.',
     tags: [
@@ -88,10 +78,10 @@ const projects = [
       { label: 'Algorithms', color: 'purple' },
     ],
     link: 'https://github.com/femnixx/mining-technical-test',
-    preview: 'data',
     accent: 'orange',
   },
   {
+    id: 7,
     title: 'Auto File Sorter',
     desc: 'Automation tool that sorts files into organized directories based on file type or custom rules.',
     tags: [
@@ -99,10 +89,10 @@ const projects = [
       { label: 'Automation', color: 'teal' },
     ],
     link: 'https://github.com/femnixx/auto-file-sorter',
-    preview: 'files',
     accent: 'teal',
   },
   {
+    id: 8,
     title: 'Dockerized Todo App',
     desc: 'Todo application containerized with Docker, featuring a complete development and deployment setup.',
     tags: [
@@ -110,180 +100,35 @@ const projects = [
       { label: 'Full-stack', color: 'teal' },
     ],
     link: 'https://github.com/femnixx/dockerized-todo-app',
-    preview: 'todo',
     accent: 'blue',
   },
 ]
 
-function ProjectPreview({ type, accent }) {
+function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   const accentColor = colorMap[accent] || '#000000'
-
-  if (type === 'phone') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content">
-          <div className="project-preview-line short" />
-          <div className="project-preview-line long" />
-          <div className="project-preview-line medium" />
-          <div className="project-preview-line short" />
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'desktop') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content">
-          <div className="project-preview-line medium" />
-          <div className="project-preview-line long" />
-          <div className="project-preview-line short" />
-          <div className="project-preview-line long" />
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'dashboard') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content" style={{ flexDirection: 'row' }}>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div className="project-preview-line short" />
-            <div className="project-preview-line medium" />
-            <div className="project-preview-line short" />
-          </div>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
-            <div className="project-preview-line medium" />
-            <div className="project-preview-line short" />
-            <div className="project-preview-line long" />
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'data') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content">
-          <div style={{ display: 'flex', gap: 4 }}>
-            <div className="project-preview-line short" style={{ flex: 1 }} />
-            <div className="project-preview-line medium" style={{ flex: 1 }} />
-            <div className="project-preview-line short" style={{ flex: 1 }} />
-          </div>
-          <div className="project-preview-line long" />
-          <div className="project-preview-line medium" />
-          <div className="project-preview-line short" />
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'files') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 12, height: 12, background: 'var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line short" style={{ flex: 1, margin: 0 }} />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 12, height: 12, background: 'var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line medium" style={{ flex: 1, margin: 0 }} />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 12, height: 12, background: 'var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line short" style={{ flex: 1, margin: 0 }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'todo') {
-    return (
-      <div className="project-preview-inner">
-        <div className="preview-accent" style={{ background: accentColor }} />
-        <div className="project-preview-bar">
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-          <div className="project-preview-dot" />
-        </div>
-        <div className="project-preview-content">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 10, height: 10, border: '1px solid var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line medium" style={{ flex: 1, margin: 0 }} />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 10, height: 10, border: '1px solid var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line short" style={{ flex: 1, margin: 0 }} />
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ width: 10, height: 10, background: 'var(--border)', borderRadius: 2 }} />
-              <div className="project-preview-line long" style={{ flex: 1, margin: 0 }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return null
-}
-
-function ProjectCard({ title, desc, tags, link, preview, accent }) {
   return (
-    <div className="project-card">
-      <div className="project-preview">
-        <ProjectPreview type={preview} accent={accent} />
-      </div>
-      <div className="project-info">
-        <div className="project-title">{title}</div>
-        <div className="project-desc">{desc}</div>
-        <div className="project-meta">
-          <div className="project-tags">
-            {tags.map((tag) => (
-              <span key={tag.label} className="tag" data-color={tag.color}>{tag.label}</span>
-            ))}
+    <div className={`project-row ${isOpen ? 'open' : ''}`} onClick={onClick}>
+      <div className="project-row-left">
+        <div className="project-row-accent" style={{ background: accentColor }} />
+        <div className="project-row-content">
+          <div className="project-row-header">
+            <span className="project-row-title">{title}</span>
+            <span className="project-row-arrow">{isOpen ? '−' : '+'}</span>
           </div>
-          {link ? (
-            <a className="project-link" href={link} target="_blank" rel="noopener">GitHub →</a>
-          ) : (
-            <span className="project-link" style={{ opacity: 0.4, cursor: 'default' }}>Private</span>
+          {isOpen && (
+            <div className="project-row-details">
+              <p>{desc}</p>
+              <div className="project-tags">
+                {tags.map((tag) => (
+                  <span key={tag.label} className="tag" data-color={tag.color}>{tag.label}</span>
+                ))}
+              </div>
+              {link && (
+                <a className="project-row-link" href={link} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
+                  View on GitHub →
+                </a>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -311,6 +156,40 @@ function Cat() {
   )
 }
 
+function FloatingShapes() {
+  const shapes = [
+    { type: 'circle', color: 'var(--c-green)', size: 60, top: '15%', left: '10%', duration: 12, delay: 0 },
+    { type: 'square', color: 'var(--c-blue)', size: 40, top: '25%', right: '12%', duration: 15, delay: 2 },
+    { type: 'triangle', color: 'var(--c-purple)', size: 50, top: '55%', left: '8%', duration: 18, delay: 4 },
+    { type: 'circle', color: 'var(--c-orange)', size: 35, top: '70%', right: '15%', duration: 14, delay: 1 },
+    { type: 'square', color: 'var(--c-pink)', size: 45, top: '40%', right: '8%', duration: 16, delay: 3 },
+    { type: 'triangle', color: 'var(--c-teal)', size: 55, top: '80%', left: '15%', duration: 20, delay: 5 },
+    { type: 'circle', color: 'var(--c-red)', size: 30, top: '10%', right: '20%', duration: 13, delay: 2.5 },
+    { type: 'square', color: 'var(--c-indigo)', size: 50, top: '60%', left: '20%', duration: 17, delay: 1.5 },
+  ]
+
+  return (
+    <div className="floating-shapes">
+      {shapes.map((shape, i) => (
+        <div
+          key={i}
+          className={`floating-shape floating-${shape.type}`}
+          style={{
+            width: shape.size,
+            height: shape.size,
+            background: shape.color,
+            top: shape.top,
+            left: shape.left,
+            right: shape.right,
+            animationDuration: `${shape.duration}s`,
+            animationDelay: `${shape.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 function Stars() {
   return (
     <div className="stars">
@@ -321,15 +200,211 @@ function Stars() {
   )
 }
 
+function ClickSpeedGame() {
+  const [clicks, setClicks] = React.useState(0)
+  const [timeLeft, setTimeLeft] = React.useState(5)
+  const [active, setActive] = React.useState(false)
+  const [done, setDone] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!active || timeLeft <= 0) {
+      if (active && timeLeft <= 0) setDone(true)
+      return
+    }
+    const t = setTimeout(() => setTimeLeft((t) => t - 1), 1000)
+    return () => clearTimeout(t)
+  }, [active, timeLeft])
+
+  const start = () => {
+    setClicks(0)
+    setTimeLeft(5)
+    setActive(true)
+    setDone(false)
+  }
+
+  return (
+    <div className="game-card">
+      <div className="game-title">⚡ Click Speed</div>
+      <div className="game-desc">Click as fast as you can in 5 seconds</div>
+      {!active && !done && (
+        <button className="game-btn" onClick={start}>Start</button>
+      )}
+      {active && (
+        <>
+          <div className="game-score">Clicks: {clicks}</div>
+          <div className="game-timer">{timeLeft}s</div>
+          <button className="game-btn" onClick={() => setClicks((c) => c + 1)}>
+            CLICK!
+          </button>
+        </>
+      )}
+      {done && (
+        <div className="game-result">
+          <div>You clicked <strong>{clicks}</strong> times!</div>
+          <button className="game-btn" onClick={start}>Play Again</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ReactionGame() {
+  const [state, setState] = React.useState('waiting') // waiting, ready, go, result
+  const [time, setTime] = React.useState(0)
+  const [startTime, setStartTime] = React.useState(0)
+  const [best, setBest] = React.useState(null)
+
+  React.useEffect(() => {
+    if (state === 'ready') {
+      const delay = 1500 + Math.random() * 3000
+      const t = setTimeout(() => {
+        setState('go')
+        setStartTime(Date.now())
+      }, delay)
+      return () => clearTimeout(t)
+    }
+  }, [state])
+
+  const start = () => {
+    setState('waiting')
+    setTimeout(() => setState('ready'), 500)
+  }
+
+  const handleClick = () => {
+    if (state === 'waiting') {
+      setState('waiting')
+      alert('Wait for green!')
+      return
+    }
+    if (state === 'ready') {
+      setState('result')
+      setTime(0)
+      return
+    }
+    if (state === 'go') {
+      const reaction = Date.now() - startTime
+      setTime(reaction)
+      setBest((b) => b === null ? reaction : Math.min(b, reaction))
+      setState('result')
+    }
+  }
+
+  const reset = () => {
+    setState('waiting')
+    setTime(0)
+  }
+
+  return (
+    <div className="game-card" onClick={handleClick}>
+      <div className="game-title">🎯 Reaction Time</div>
+      <div className="game-desc">Click when the box turns green</div>
+      {state === 'waiting' && (
+        <button className="game-btn" onClick={(e) => { e.stopPropagation(); start() }}>Start</button>
+      )}
+      {state === 'ready' && (
+        <div className="game-box waiting">Wait...</div>
+      )}
+      {state === 'go' && (
+        <div className="game-box go">CLICK!</div>
+      )}
+      {state === 'result' && (
+        <div className="game-result">
+          <div>Reaction: <strong>{time}ms</strong></div>
+          {best !== null && <div>Best: <strong>{best}ms</strong></div>}
+          <button className="game-btn" onClick={(e) => { e.stopPropagation(); reset() }}>Play Again</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MemoryGame() {
+  const emojis = ['🎮', '🎨', '🚀', '💡', '🎵', '⭐']
+  const [cards, setCards] = React.useState(() => {
+    const shuffled = [...emojis, ...emojis].sort(() => Math.random() - 0.5)
+    return shuffled.map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }))
+  })
+  const [flipped, setFlipped] = React.useState([])
+  const [moves, setMoves] = React.useState(0)
+  const [won, setWon] = React.useState(false)
+
+  React.useEffect(() => {
+    if (flipped.length === 2) {
+      const [a, b] = flipped
+      if (cards[a].emoji === cards[b].emoji) {
+        setCards((c) => c.map((card, i) => i === a || i === b ? { ...card, matched: true } : card))
+        setFlipped([])
+      } else {
+        setTimeout(() => {
+          setFlipped([])
+        }, 800)
+      }
+      setMoves((m) => m + 1)
+    }
+  }, [flipped, cards])
+
+  React.useEffect(() => {
+    if (cards.every((c) => c.matched) && cards.length > 0) {
+      setWon(true)
+    }
+  }, [cards])
+
+  const flip = (i) => {
+    if (flipped.length === 2 || cards[i].flipped || cards[i].matched) return
+    setFlipped((f) => [...f, i])
+    setCards((c) => c.map((card, idx) => idx === i ? { ...card, flipped: true } : card))
+  }
+
+  const reset = () => {
+    const shuffled = [...emojis, ...emojis].sort(() => Math.random() - 0.5)
+    setCards(shuffled.map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false })))
+    setFlipped([])
+    setMoves(0)
+    setWon(false)
+  }
+
+  return (
+    <div className="game-card">
+      <div className="game-title">🃏 Memory Match</div>
+      <div className="game-desc">Match all the pairs</div>
+      <div className="memory-grid">
+        {cards.map((card, i) => (
+          <button
+            key={card.id}
+            className={`memory-card ${card.flipped || card.matched ? 'flipped' : ''} ${card.matched ? 'matched' : ''}`}
+            onClick={() => flip(i)}
+          >
+            <span className="memory-front">?</span>
+            <span className="memory-back">{card.emoji}</span>
+          </button>
+        ))}
+      </div>
+      <div className="game-footer">
+        <span>Moves: {moves}</span>
+        {won && <span className="game-win">You won!</span>}
+        <button className="game-btn small" onClick={reset}>Reset</button>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [openProjects, setOpenProjects] = React.useState({})
+
+  const toggleProject = (id) => {
+    setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
+  }
+
   return (
     <>
+      <FloatingShapes />
       <Stars />
       <nav>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#projects">Projects</a></li>
+          <li><a href="#games">Games</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
@@ -380,10 +455,28 @@ function App() {
       <section id="projects">
         <div className="container">
           <div className="section-header">02 — Selected Work</div>
-          <div className="projects-grid">
+          <div className="projects-list">
             {projects.map((p) => (
-              <ProjectCard key={p.title} {...p} />
+              <ProjectRow
+                key={p.id}
+                {...p}
+                isOpen={!!openProjects[p.id]}
+                onClick={() => toggleProject(p.id)}
+              />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* GAMES */}
+      <section id="games">
+        <div className="container">
+          <div className="section-header">04 — Mini Games</div>
+          <p className="games-intro">A few small browser games I built for fun. Click, match, and test your reflexes.</p>
+          <div className="games-grid">
+            <ClickSpeedGame />
+            <ReactionGame />
+            <MemoryGame />
           </div>
         </div>
       </section>
@@ -391,7 +484,7 @@ function App() {
       {/* CONTACT */}
       <section id="contact">
         <div className="container">
-          <div className="section-header">03 — Contact</div>
+          <div className="section-header">05 — Contact</div>
           <div className="contact-grid">
             <div>
               <div className="contact-label">Status</div>
