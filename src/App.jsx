@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './index.css'
+import GitHubProfileViewer from './components/GitHubProfileViewer'
 
 const colorMap = {
   green: '#A6D189',
@@ -141,20 +142,20 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
 }
 
 function Terminal({ theme }) {
-  const [history, setHistory] = React.useState([
+  const [history, setHistory] = useState([
     { type: 'output', text: `Welcome to Surya's portfolio terminal! (${theme} theme)` },
     { type: 'output', text: 'Type "help" to see available commands.' },
   ])
-  const [input, setInput] = React.useState('')
-  const [focused, setFocused] = React.useState(false)
-  const endRef = React.useRef(null)
-  const hiddenRef = React.useRef(null)
+  const [input, setInput] = useState('')
+  const [focused, setFocused] = useState(false)
+  const endRef = useRef(null)
+  const hiddenRef = useRef(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [history])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (focused) {
       hiddenRef.current?.focus()
     }
@@ -319,12 +320,12 @@ Uptime: ${Math.floor(Math.random() * 100)} days`,
 }
 
 function ClickSpeedGame() {
-  const [clicks, setClicks] = React.useState(0)
-  const [timeLeft, setTimeLeft] = React.useState(5)
-  const [active, setActive] = React.useState(false)
-  const [done, setDone] = React.useState(false)
+  const [clicks, setClicks] = useState(0)
+  const [timeLeft, setTimeLeft] = useState(5)
+  const [active, setActive] = useState(false)
+  const [done, setDone] = useState(false)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!active || timeLeft <= 0) {
       if (active && timeLeft <= 0) setDone(true)
       return
@@ -367,12 +368,12 @@ function ClickSpeedGame() {
 }
 
 function ReactionGame() {
-  const [state, setState] = React.useState('waiting')
-  const [time, setTime] = React.useState(0)
-  const [startTime, setStartTime] = React.useState(0)
-  const [best, setBest] = React.useState(null)
+  const [state, setState] = useState('waiting')
+  const [time, setTime] = useState(0)
+  const [startTime, setStartTime] = useState(0)
+  const [best, setBest] = useState(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (state === 'ready') {
       const delay = 1500 + Math.random() * 3000
       const t = setTimeout(() => {
@@ -438,15 +439,15 @@ function ReactionGame() {
 
 function MemoryGame() {
   const emojis = ['🎮', '🎨', '🚀', '💡', '🎵', '⭐', '🔥', '💻']
-  const [cards, setCards] = React.useState(() => {
+  const [cards, setCards] = useState(() => {
     const shuffled = [...emojis, ...emojis].sort(() => Math.random() - 0.5)
     return shuffled.map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }))
   })
-  const [flipped, setFlipped] = React.useState([])
-  const [moves, setMoves] = React.useState(0)
-  const [won, setWon] = React.useState(false)
+  const [flipped, setFlipped] = useState([])
+  const [moves, setMoves] = useState(0)
+  const [won, setWon] = useState(false)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (flipped.length === 2) {
       const [a, b] = flipped
       if (cards[a].emoji === cards[b].emoji) {
@@ -462,7 +463,7 @@ function MemoryGame() {
     }
   }, [flipped, cards])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (cards.every((c) => c.matched) && cards.length > 0) {
       setWon(true)
     }
@@ -511,38 +512,14 @@ function MemoryGame() {
 }
 
 function App() {
-  const [openProjects, setOpenProjects] = React.useState({})
-  const [githubProfile, setGithubProfile] = React.useState(null)
-  const [githubRepos, setGithubRepos] = React.useState([])
-  const [githubContributions, setGithubContributions] = React.useState(0)
-  const [theme, setTheme] = React.useState(() => localStorage.getItem('theme') || 'frappe')
-  const [menuOpen, setMenuOpen] = React.useState(false)
+  const [openProjects, setOpenProjects] = useState({})
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'frappe')
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('theme', theme)
   }, [theme])
-
-  React.useEffect(() => {
-    fetch('https://api.github.com/users/femnixx')
-      .then((r) => r.json())
-      .then(setGithubProfile)
-      .catch(() => {})
-
-    fetch('https://api.github.com/users/femnixx/repos?sort=updated&per_page=8')
-      .then((r) => r.json())
-      .then(setGithubRepos)
-      .catch(() => {})
-
-    fetch('https://api.github.com/users/femnixx/events/public?per_page=100')
-      .then((r) => r.json())
-      .then((events) => {
-        if (Array.isArray(events)) {
-          setGithubContributions(events.length)
-        }
-      })
-      .catch(() => {})
-  }, [])
 
   const toggleProject = (id) => {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -637,39 +614,8 @@ function App() {
       {/* GITHUB */}
       <section id="github">
         <div className="container">
-          <div className="github-header">03 — GitHub</div>
-          <div className="github-intro">My open source work and recent repositories.</div>
-          {githubProfile && (
-            <div className="github-profile">
-              <img src={githubProfile.avatar_url} alt="avatar" className="github-avatar" />
-              <div className="github-profile-info">
-                <div className="github-profile-name">{githubProfile.name || githubProfile.login}</div>
-                <div className="github-profile-login">@{githubProfile.login}</div>
-                {githubProfile.bio && <div className="github-profile-bio">{githubProfile.bio}</div>}
-                <div className="github-profile-stats">
-                  <span className="github-profile-stat">📦 {githubProfile.public_repos}</span>
-                  <span className="github-profile-stat">👥 {githubProfile.followers}</span>
-                  <span className="github-profile-stat">📍 {githubProfile.location || 'Indonesia'}</span>
-                  <span className="github-profile-stat">🔥 {githubContributions} recent events</span>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="github-repos-grid">
-            {githubRepos.map((repo) => (
-              <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener" className="github-repo-card">
-                <div className="github-repo-name">{repo.name}</div>
-                {repo.description && <div className="github-repo-desc">{repo.description}</div>}
-                <div className="github-repo-meta">
-                  <span className="github-repo-lang">
-                    <span className="github-lang-dot" style={{ background: repo.language ? (repo.language === 'JavaScript' ? '#E5C890' : repo.language === 'PHP' ? '#BABBF1' : repo.language === 'Python' ? '#A6D189' : repo.language === 'Dart' ? '#8CAAEE' : repo.language === 'Java' ? '#E78284' : '#CA9EE6') : 'var(--text-muted)' }} />
-                    {repo.language || 'Unknown'}
-                  </span>
-                  <span>⭐ {repo.stargazers_count}</span>
-                </div>
-              </a>
-            ))}
-          </div>
+          <div className="section-header">03 — GitHub</div>
+          <GitHubProfileViewer defaultUsername="femnixx" />
         </div>
       </section>
 

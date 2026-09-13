@@ -1,0 +1,266 @@
+.gh-viewer {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'DM Mono', monospace;
+}
+
+.gh-input-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.gh-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.gh-input:focus {
+  border-color: var(--accent-mauve);
+}
+
+.gh-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-mauve);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.gh-btn:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.gh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gh-error {
+  padding: 1rem;
+  background: rgba(231, 130, 132, 0.12);
+  border: 1px solid rgba(231, 130, 132, 0.3);
+  border-radius: 8px;
+  color: var(--accent-red);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.gh-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.gh-header {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+.gh-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-mauve);
+  flex-shrink: 0;
+}
+
+.gh-header-info {
+  flex: 1;
+}
+
+.gh-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.gh-login {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.gh-bio {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.gh-contribution-banner {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.gh-contribution-number {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--accent-green);
+}
+
+.gh-contribution-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.gh-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.gh-section:last-child {
+  border-bottom: none;
+}
+
+.gh-section-title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.gh-orgs {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.gh-org-badge {
+  padding: 0.35rem 0.85rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gh-org-badge:hover {
+  border-color: var(--accent-mauve);
+  color: var(--text);
+}
+
+.gh-repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gh-repo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.gh-repo-item:hover {
+  border-color: var(--accent-mauve);
+}
+
+.gh-repo-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.gh-repo-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.gh-lang-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gh-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gh-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gh-chart-label {
+  width: 120px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.gh-chart-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gh-chart-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.gh-chart-value {
+  width: 40px;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .gh-chart-row {
+    flex-wrap: wrap;
+  }
+  .gh-chart-label {
+    width: 100%;
+  }
+  .gh-chart-value {
+    width: auto;
+  }
+}
