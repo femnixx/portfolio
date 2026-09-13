@@ -19,20 +19,21 @@ const projects = [
     desc: 'Educational app for detecting fake vs. real news. Interactive modules, level progression, AI-powered question generation and user feedback.',
     tags: [
       { label: 'Flutter', color: 'blue' },
-      { label: 'AI', color: 'purple' },
-      { label: 'Solo', color: 'teal' },
+      { label: 'Mobile', color: 'green' },
+      { label: 'Education', color: 'orange' },
     ],
     link: 'https://github.com/femnixx/jaganalar',
     accent: 'purple',
   },
   {
     id: 2,
-    title: 'Sigma — Siaga Malang',
-    desc: 'Public safety mobile app for real-time emergency reporting, AI analytics, emergency call integration, and news module.',
+    title: 'ZELOW — Siaga Malang',
+    desc: 'Public safety mobile app for real-time emergency reporting, AI analytics, emergency call integration, and news module. Built with Jetpack Compose.',
     tags: [
       { label: 'Flutter', color: 'blue' },
-      { label: 'AI', color: 'purple' },
-      { label: 'Team', color: 'orange' },
+      { label: 'Mobile', color: 'green' },
+      { label: 'Jetpack Compose', color: 'purple' },
+      { label: 'Safety', color: 'red' },
     ],
     link: 'https://github.com/Raion-Mobile-Engineer/ZELOW',
     accent: 'red',
@@ -50,8 +51,20 @@ const projects = [
   },
   {
     id: 4,
+    title: 'Foodmind',
+    desc: 'Web-based application for food tracking, meal planning, and nutrition management. Built with React JSX.',
+    tags: [
+      { label: 'React', color: 'blue' },
+      { label: 'Web', color: 'green' },
+      { label: 'JSX', color: 'purple' },
+    ],
+    link: 'https://github.com/femnixx/foodmind',
+    accent: 'green',
+  },
+  {
+    id: 5,
     title: 'Laravel Dashboard',
-    desc: 'Custom dashboard built with Laravel for admin and analytics use cases.',
+    desc: 'Custom admin dashboard built with Laravel and PHP for analytics and management use cases.',
     tags: [
       { label: 'Laravel', color: 'pink' },
       { label: 'PHP', color: 'indigo' },
@@ -60,23 +73,13 @@ const projects = [
     accent: 'blue',
   },
   {
-    id: 5,
-    title: 'Foodmind',
-    desc: 'Application focused on food tracking, meal planning, or nutrition management.',
-    tags: [
-      { label: 'Flutter', color: 'blue' },
-      { label: 'Mobile', color: 'green' },
-    ],
-    link: 'https://github.com/femnixx/foodmind',
-    accent: 'green',
-  },
-  {
     id: 6,
     title: 'Mining Technical Test',
-    desc: 'Technical project involving data processing and algorithmic challenges.',
+    desc: 'Technical project involving data processing and algorithmic challenges. Built with Laravel, Docker, and GitHub Workflows.',
     tags: [
-      { label: 'Python', color: 'green' },
-      { label: 'Algorithms', color: 'purple' },
+      { label: 'Laravel', color: 'pink' },
+      { label: 'Docker', color: 'blue' },
+      { label: 'GitHub Workflow', color: 'purple' },
     ],
     link: 'https://github.com/femnixx/mining-technical-test',
     accent: 'orange',
@@ -84,10 +87,10 @@ const projects = [
   {
     id: 7,
     title: 'Auto File Sorter',
-    desc: 'Automation tool that sorts files into organized directories based on file type or custom rules.',
+    desc: 'Automation tool that sorts files into organized directories based on file type or custom rules. Built with Python and Docker.',
     tags: [
       { label: 'Python', color: 'green' },
-      { label: 'Automation', color: 'teal' },
+      { label: 'Docker', color: 'blue' },
     ],
     link: 'https://github.com/femnixx/auto-file-sorter',
     accent: 'teal',
@@ -95,10 +98,10 @@ const projects = [
   {
     id: 8,
     title: 'Dockerized Todo App',
-    desc: 'Todo application containerized with Docker, featuring a complete development and deployment setup.',
+    desc: 'Full-stack todo application containerized with Docker and built with React. Complete development and deployment setup.',
     tags: [
       { label: 'Docker', color: 'blue' },
-      { label: 'Full-stack', color: 'teal' },
+      { label: 'React', color: 'purple' },
     ],
     link: 'https://github.com/femnixx/dockerized-todo-app',
     accent: 'blue',
@@ -137,6 +140,14 @@ function ProjectRow({ title, desc, tags, link, accent, isOpen, onClick }) {
   )
 }
 
+function EntranceAnimation() {
+  return (
+    <div className="entrance-overlay">
+      <div className="entrance-content">Surya Pradipta</div>
+    </div>
+  )
+}
+
 function Cat() {
   return (
     <div className="cat-wrap">
@@ -153,50 +164,6 @@ function Cat() {
         </div>
         <div className="cat-tail" />
       </div>
-    </div>
-  )
-}
-
-function FloatingShapes() {
-  const shapes = [
-    { type: 'circle', color: 'var(--c-green)', size: 60, top: '15%', left: '10%', duration: 12, delay: 0 },
-    { type: 'square', color: 'var(--c-blue)', size: 40, top: '25%', right: '12%', duration: 15, delay: 2 },
-    { type: 'triangle', color: 'var(--c-purple)', size: 50, top: '55%', left: '8%', duration: 18, delay: 4 },
-    { type: 'circle', color: 'var(--c-orange)', size: 35, top: '70%', right: '15%', duration: 14, delay: 1 },
-    { type: 'square', color: 'var(--c-pink)', size: 45, top: '40%', right: '8%', duration: 16, delay: 3 },
-    { type: 'triangle', color: 'var(--c-teal)', size: 55, top: '80%', left: '15%', duration: 20, delay: 5 },
-    { type: 'circle', color: 'var(--c-red)', size: 30, top: '10%', right: '20%', duration: 13, delay: 2.5 },
-    { type: 'square', color: 'var(--c-indigo)', size: 50, top: '60%', left: '20%', duration: 17, delay: 1.5 },
-  ]
-
-  return (
-    <div className="floating-shapes">
-      {shapes.map((shape, i) => (
-        <div
-          key={i}
-          className={`floating-shape floating-${shape.type}`}
-          style={{
-            width: shape.size,
-            height: shape.size,
-            background: shape.color,
-            top: shape.top,
-            left: shape.left,
-            right: shape.right,
-            animationDuration: `${shape.duration}s`,
-            animationDelay: `${shape.delay}s`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
-function Stars() {
-  return (
-    <div className="stars">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="star" />
-      ))}
     </div>
   )
 }
@@ -398,8 +365,7 @@ function App() {
 
   return (
     <>
-      <FloatingShapes />
-      <Stars />
+      <EntranceAnimation />
       <nav>
         <a className="nav-name" href="#hero">Surya Pradipta</a>
         <ul className="nav-links">
