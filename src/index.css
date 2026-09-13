@@ -26,6 +26,7 @@
   --terminal-prompt: #F4B8E4;
   --terminal-cmd: #C6D0F5;
   --terminal-cursor: #A6D189;
+  --nav-bg: rgba(48, 52, 70, 0.92);
 }
 
 [data-theme="latte"] {
@@ -54,6 +55,7 @@
   --terminal-prompt: #EA76CB;
   --terminal-cmd: #4C4F69;
   --terminal-cursor: #40A02B;
+  --nav-bg: rgba(239, 241, 245, 0.92);
 }
 
 html { scroll-behavior: smooth; }
@@ -84,7 +86,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2.5rem;
-  background: rgba(48, 52, 70, 0.92);
+  background: var(--nav-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
