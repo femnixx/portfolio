@@ -455,6 +455,7 @@ function MemoryGame() {
       } else {
         setTimeout(() => {
           setFlipped([])
+          setCards((c) => c.map((card, i) => flipped.includes(i) ? { ...card, flipped: false } : card))
         }, 800)
       }
       setMoves((m) => m + 1)
