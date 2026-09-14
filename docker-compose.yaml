@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  web-server:
+    build: .
+    ports:
+      - "5174:5173"
+    restart: unless-stopped
+
