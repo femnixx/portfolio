@@ -163,9 +163,11 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
     return max || 1
   }, [commitActivity])
 
-  const getPunchColor = (val) => {
-    if (val === 0) return 'var(--bg)'
-    return 'var(--accent-green)'
+  const getPunchStrength = (val) => {
+    if (val <= 0) return 0
+    const minStrength = 20
+    const ratio = Math.max(0, Math.min(1, val / punchCardMax))
+    return minStrength + Math.round(ratio * (100 - minStrength))
   }
 
   const totalCommitsLastYear = useMemo(() => {
@@ -293,20 +295,28 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
               <div className="gh-radar-container">
                 {radarData.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                    <RadarChart
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="62%"
+                      margin={{ top: 28, right: 36, bottom: 28, left: 36 }}
+                      data={radarData}
+                    >
                       <PolarGrid stroke="var(--border)" />
                       <PolarAngleAxis
                         dataKey="subject"
                         stroke="var(--text-muted)"
+                        tickLine={false}
                         tick={({ x, y, payload }) => {
                           const lines = payload.value.split('\n')
                           const color = radarData[payload.index]?.color || 'var(--accent-mauve)'
+                          const labelY = y < 150 ? y - 16 : y + 16
                           return (
-                            <text x={x} y={y} fill="var(--text-muted)" fontSize={12} textAnchor="middle">
-                              <tspan x={x} dy="-0.2em" fontWeight="bold" fill={color}>
+                            <text x={x} y={labelY} fill="var(--text-muted)" fontSize={13} textAnchor="middle" dominantBaseline="middle">
+                              <tspan x={x} dy="-0.4em" fontWeight="bold" fill={color}>
                                 {lines[0]}
                               </tspan>
-                              <tspan x={x} dy="1.2em">
+                              <tspan x={x} dy="1.9em">
                                 {lines[1]}
                               </tspan>
                             </text>
@@ -359,7 +369,7 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                             <div
                               key={hour}
                               className="gh-punch-cell"
-                              style={{ background: getPunchColor(val), animationDelay: `${delay}s` }}
+                              style={{ '--punch-strength': `${getPunchStrength(val)}%`, animationDelay: `${delay}s` }}
                               data-tooltip={tooltipText}
                             />
                           )
@@ -370,13 +380,13 @@ function GitHubProfileViewer({ defaultUsername = 'femnixx' }) {
                 </div>
                 <div className="gh-punch-legend">
                   <span>Less</span>
-                  {[0, 1, 2, 3, 4].map((level) => (
-                    <div
-                      key={level}
-                      className="gh-punch-legend-cell"
-                      style={{ background: getPunchColor(level === 0 ? 0 : Math.max(1, Math.floor(punchCardMax * (level / 4)))) }}
-                    />
-                  ))}
+                    {[0, 0.25, 0.5, 0.75, 1].map((level) => (
+                      <div
+                        key={level}
+                        className="gh-punch-legend-cell"
+                        style={{ '--punch-strength': `${getPunchStrength(punchCardMax * level)}%` }}
+                      />
+                    ))}
                   <span>More</span>
                 </div>
               </div>

@@ -320,7 +320,9 @@
   flex-shrink: 0;
   cursor: pointer;
   position: relative;
-  transition: transform 0.15s, opacity 0.15s;
+  background: var(--bg);
+  background: color-mix(in srgb, var(--accent-green) var(--punch-strength, 0%), var(--bg));
+  transition: transform 0.15s, opacity 0.15s, background 0.15s;
   animation: ghPunchFade 0.3s ease backwards;
 }
 
@@ -360,6 +362,8 @@
   width: 10px;
   height: 10px;
   border-radius: 2px;
+  background: var(--bg);
+  background: color-mix(in srgb, var(--accent-green) var(--punch-strength, 0%), var(--bg));
 }
 
 .gh-bottom-row {
